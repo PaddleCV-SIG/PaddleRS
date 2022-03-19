@@ -40,7 +40,7 @@ __all__ = [
     "RandomVerticalFlip", "Normalize", "CenterCrop", "RandomCrop",
     "RandomScaleAspect", "RandomExpand", "Padding", "MixupImage",
     "RandomDistort", "RandomBlur", 
-    "RandomSwap",
+    "RandomSwap", "Binarize",
     "ArrangeSegmenter", "ArrangeChangeDetector", 
     "ArrangeClassifier", "ArrangeDetector"
 ]
@@ -1467,7 +1467,14 @@ class _Permute(Transform):
         
 
 class RandomSwap(Transform):
-    def __init__(self, prob=0.5):
+    """
+    Randomly swap multi-temporal images.
+
+    Args:
+        prob (float, optional): Probability of swapping the input images. Default: 0.2.
+    """
+
+    def __init__(self, prob=0.2):
         super(RandomSwap, self).__init__()
         self.prob = prob
 
@@ -1476,6 +1483,31 @@ class RandomSwap(Transform):
             raise ValueError('image2 is not found in the sample.')
         if random.random() < self.prob:
             sample['image'], sample['image2'] = sample['image2'], sample['image']
+        return sample
+
+
+class Binarize(Transform):
+    """
+    Binarize masks.
+
+    Args:
+        thresh (float, optional): Threshold used in binarization. Default: 127.
+        apply_to_aux_masks (bool, optional): Whether to binarize auxiliary masks. Default: True.
+    """
+
+    def __init__(self, thresh=127, apply_to_aux_masks=True):
+        super(Binarize, self).__init__()
+        self.thresh = thresh
+        self.apply_to_aux_masks = apply_to_aux_masks
+
+    def apply_mask(self, mask):
+        return (mask>self.thresh).astype(mask.dtype)
+
+    def apply(self, sample):
+        if 'mask' in sample:
+            sample['mask'] = self.apply_mask(sample['mask'])
+        if 'aux_masks' in sample and self.apply_to_aux_masks:
+            sample['aux_masks'] = list(map(self.apply_mask, sample['aux_masks']))
         return sample
 
 
