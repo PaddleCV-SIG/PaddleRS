@@ -32,6 +32,7 @@ class CDDataset(Dataset):
         num_workers (int|str): 数据集中样本在预处理过程中的线程或进程数。默认为'auto'。
         shuffle (bool): 是否需要对数据集中样本打乱顺序。默认为False。
         with_seg_labels (bool, optional): 数据集中是否包含两个时相的语义分割标签。默认为False。
+        binarize_labels (bool, optional): 是否对数据集中的标签进行二值化操作。默认为False。
     """
 
     def __init__(self,
@@ -41,7 +42,8 @@ class CDDataset(Dataset):
                  transforms=None,
                  num_workers='auto',
                  shuffle=False,
-                 with_seg_labels=False):
+                 with_seg_labels=False,
+                 binarize_labels=False):
         super(CDDataset, self).__init__()
 
         DELIMETER = ' '
@@ -58,6 +60,7 @@ class CDDataset(Dataset):
             num_items = 5   # 3+2
         else:
             num_items = 3
+        self.binarize_labels = binarize_labels
 
         # TODO：非None时，让用户跳转数据集分析生成label_list
         # 不要在此处分析label file
@@ -120,10 +123,15 @@ class CDDataset(Dataset):
     def __getitem__(self, idx):
         sample = copy.deepcopy(self.file_list[idx])
         outputs = self.transforms(sample)
+        if self.binarize_labels:
+            outputs = outputs[:2]+tuple(map(self._binarize, outputs[2:]))
         return outputs
 
     def __len__(self):
         return len(self.file_list)
+
+    def _binarize(self, mask, threshold=127):
+        return (mask>threshold).astype('int64')
 
 
 class MaskType(IntEnum):
