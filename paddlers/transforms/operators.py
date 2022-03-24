@@ -28,15 +28,17 @@ except Exception:
 from numbers import Number
 from .functions import normalize, horizontal_flip, permute, vertical_flip, center_crop, is_poly, \
     horizontal_flip_poly, horizontal_flip_rle, vertical_flip_poly, vertical_flip_rle, crop_poly, \
-    crop_rle, expand_poly, expand_rle, resize_poly, resize_rle
+    crop_rle, expand_poly, expand_rle, resize_poly, resize_rle, de_haze, pca, select_bands, \
+    to_intensity, to_uint8
+
 
 __all__ = [
     "Compose", "ImgDecoder", "Resize", "RandomResize", "ResizeByShort",
     "RandomResizeByShort", "ResizeByLong", "RandomHorizontalFlip",
     "RandomVerticalFlip", "Normalize", "CenterCrop", "RandomCrop",
     "RandomScaleAspect", "RandomExpand", "Padding", "MixupImage",
-    "RandomDistort", "RandomBlur", "ArrangeSegmenter", "ArrangeChangeDetector", 
-    "ArrangeClassifier", "ArrangeDetector"
+    "RandomDistort", "RandomBlur", "Defogging", "DimReducing", "BandSelecting", 
+    "ArrangeSegmenter", "ArrangeChangeDetector", "ArrangeClassifier", "ArrangeDetector"
 ]
 
 interp_dict = {
@@ -97,9 +99,10 @@ class ImgDecoder(Transform):
         to_rgb (bool, optional): If True, convert input images from BGR format to RGB format. Defaults to True.
     """
 
-    def __init__(self, to_rgb=True):
+    def __init__(self, to_rgb=True, to_uint8=True):
         super(ImgDecoder, self).__init__()
         self.to_rgb = to_rgb
+        self.to_uint8 = to_uint8
 
     def read_img(self, img_path, input_channel=3):
         img_format = imghdr.what(img_path)
@@ -121,6 +124,7 @@ class ImgDecoder(Transform):
                 raise Exception('Can not open', img_path)
             im_data = dataset.ReadAsArray()
             if im_data.ndim == 2:
+                im_data = to_intensity(im_data)  # is read SAR
                 im_data = im_data[:, :, np.newaxis]
             elif im_data.ndim == 3:
                 im_data = im_data.transpose((1, 2, 0))
@@ -149,6 +153,9 @@ class ImgDecoder(Transform):
 
         if self.to_rgb and image.shape[-1] == 3:
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        
+        if self.to_uint8:
+            image = to_uint8(image)
 
         return image
 
@@ -1348,6 +1355,77 @@ class RandomBlur(Transform):
                 sample['image'] = self.apply_im(sample['image'], radius)
                 if 'image2' in sample:
                     sample['image2'] = self.apply_im(sample['image2'], radius)
+        return sample
+
+
+class Defogging(Transform):
+    """
+    Defog input image(s).
+
+    Args: 
+        gamma (bool, optional): Use gamma correction or not. Defaults to False.
+    """
+
+    def __init__(self, gamma=False):
+        super(Defogging, self).__init__()
+        self.gamma = gamma
+
+    def apply_im(self, image):
+        image = de_haze(image, self.gamma)
+        return image
+
+    def apply(self, sample):
+        sample['image'] = self.apply_im(sample['image'])
+        if 'image2' in sample:
+            sample['image2'] = self.apply_im(sample['image2'])
+        return sample
+
+
+class DimReducing(Transform):
+    """
+    Use PCA to reduce input image(s) dimension.
+
+    Args: 
+        dim (int, optional): Reserved dimensions. Defaults to 3.
+        whiten (bool, optional): PCA whiten or not. Defaults to True.
+    """
+
+    def __init__(self, dim=3, whiten=True):
+        super(DimReducing, self).__init__()
+        self.dim = dim
+        self.whiten = whiten
+
+    def apply_im(self, image):
+        image = pca(image, self.gamma)
+        return image
+
+    def apply(self, sample):
+        sample['image'] = self.apply_im(sample['image'])
+        if 'image2' in sample:
+            sample['image2'] = self.apply_im(sample['image2'])
+        return sample
+
+
+class BandSelecting(Transform):
+    """
+    Select the band of the input image(s).
+
+    Args: 
+        band_list (list, optional): Bands of selected (Start with 1). Defaults to [1, 2, 3].
+    """
+
+    def __init__(self, band_list=[1, 2, 3]):
+        super(BandSelecting, self).__init__()
+        self.band_list = band_list
+
+    def apply_im(self, image):
+        image = select_bands(image, self.band_list)
+        return image
+
+    def apply(self, sample):
+        sample['image'] = self.apply_im(sample['image'])
+        if 'image2' in sample:
+            sample['image2'] = self.apply_im(sample['image2'])
         return sample
 
 

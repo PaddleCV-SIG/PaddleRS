@@ -16,6 +16,7 @@ import cv2
 import numpy as np
 import copy
 import operator
+from numpy import isin
 import shapely.ops
 from shapely.geometry import Polygon, MultiPolygon, GeometryCollection
 from functools import reduce
@@ -301,6 +302,8 @@ def select_bands(im, band_list=[1, 2, 3]):
     Returns:
         np.ndarray: The image after band selected.
     """
+    if not isinstance(band_list, list):
+        raise TypeError("band_list must be list.")
     total_band = im.shape[-1]
     result = []
     for band in band_list:
