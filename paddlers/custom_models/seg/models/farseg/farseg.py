@@ -17,7 +17,7 @@ import paddle.nn as nn
 import paddle.nn.functional as F
 from paddle.vision.models import resnet50
 from .fpn import FPN
-from paddlers.custom_models.seg.models.utils import Identity
+from ..utils import Identity
 
 
 class SceneRelation(nn.Layer):
