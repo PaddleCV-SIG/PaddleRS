@@ -16,7 +16,6 @@ import cv2
 import numpy as np
 import copy
 import operator
-from numpy import isin
 import shapely.ops
 from shapely.geometry import Polygon, MultiPolygon, GeometryCollection
 from functools import reduce
