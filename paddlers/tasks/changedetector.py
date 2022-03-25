@@ -46,6 +46,7 @@ __all__ = [
     "DSIFN", 
     "DSAMNet", 
     "ChangeStar"
+    "DSAMNet"
 ]
 
 
