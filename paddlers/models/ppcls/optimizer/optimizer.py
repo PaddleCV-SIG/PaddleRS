@@ -197,8 +197,9 @@ class AdamW(object):
 
         if self.one_dim_param_no_weight_decay:
             self.no_weight_decay_param_name_list += [
-                p.name for model in model_list
-                for n, p in model.named_parameters() if len(p.shape) == 1
+                p.name
+                for model in model_list for n, p in model.named_parameters()
+                if len(p.shape) == 1
             ] if model_list else []
 
         opt = optim.AdamW(

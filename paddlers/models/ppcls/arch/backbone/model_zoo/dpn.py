@@ -295,9 +295,7 @@ class DPN(nn.Layer):
                             _type=_type2,
                             name="dpn" + str(num))))
 
-                num_channel_dpn = [
-                    num_channel_dpn[0], num_channel_dpn[1] + inc
-                ]
+                num_channel_dpn = [num_channel_dpn[0], num_channel_dpn[1] + inc]
 
         out_channel = sum(num_channel_dpn)
 

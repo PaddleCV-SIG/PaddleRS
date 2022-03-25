@@ -86,8 +86,7 @@ class DarkNet(nn.Layer):
 
         self.stages = [1, 2, 8, 8, 4]
         self._conv1 = ConvBNLayer(3, 32, 3, 1, 1, name="yolo_input")
-        self._conv2 = ConvBNLayer(
-            32, 64, 3, 2, 1, name="yolo_input.downsample")
+        self._conv2 = ConvBNLayer(32, 64, 3, 2, 1, name="yolo_input.downsample")
 
         self._basic_block_01 = BasicBlock(64, 32, name="stage.0.0")
         self._downsample_0 = ConvBNLayer(

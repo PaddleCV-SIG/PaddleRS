@@ -316,10 +316,8 @@ class Conv2ds(nn.Layer):
             model_name][cur_stage]
         self.need_crop = False
         if padding_type == "SAME":
-            top_padding, bottom_padding = cal_padding(inps, stride,
-                                                      filter_size)
-            left_padding, right_padding = cal_padding(inps, stride,
-                                                      filter_size)
+            top_padding, bottom_padding = cal_padding(inps, stride, filter_size)
+            left_padding, right_padding = cal_padding(inps, stride, filter_size)
             height_padding = bottom_padding
             width_padding = right_padding
             if top_padding != bottom_padding or left_padding != right_padding:
@@ -695,8 +693,7 @@ class ExtractFeatures(nn.Layer):
                                             _global_params),
                 output_filters=round_filters(block_args.output_filters,
                                              _global_params),
-                num_repeat=round_repeats(block_args.num_repeat,
-                                         _global_params))
+                num_repeat=round_repeats(block_args.num_repeat, _global_params))
 
             drop_connect_rate = self._global_params.drop_connect_rate
             if drop_connect_rate:

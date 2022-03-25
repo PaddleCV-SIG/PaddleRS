@@ -175,8 +175,7 @@ def get_config(fname, overrides=None, show=False):
     """
     Read config from file
     """
-    assert os.path.exists(fname), (
-        'config file({}) is not exist'.format(fname))
+    assert os.path.exists(fname), ('config file({}) is not exist'.format(fname))
     config = parse_config(fname)
     override_config(config, overrides)
     if show:

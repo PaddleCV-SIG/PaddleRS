@@ -14,7 +14,6 @@
 
 import setuptools
 
-
 DESCRIPTION = "Awesome Remote Sensing Toolkit based on PaddlePaddle"
 
 with open("README.md", "r") as fh:
@@ -46,6 +45,4 @@ setuptools.setup(
         "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
     ],
-    license='Apache 2.0',
-    )
-
+    license='Apache 2.0', )

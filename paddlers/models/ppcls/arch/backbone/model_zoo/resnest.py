@@ -515,8 +515,7 @@ class ResNeSt(nn.Layer):
         self.max_pool2d = MaxPool2D(kernel_size=3, stride=2, padding=1)
 
         self.layer1 = ResNeStLayer(
-            inplanes=self.stem_width * 2
-            if self.deep_stem else self.stem_width,
+            inplanes=self.stem_width * 2 if self.deep_stem else self.stem_width,
             planes=64,
             blocks=self.layers[0],
             radix=radix,

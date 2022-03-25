@@ -76,8 +76,7 @@ def gen_bottleneck_params(backbone='xception_65'):
         }
     else:
         raise Exception(
-            "xception backbont only support xception_41/xception_65/xception_71"
-        )
+            "xception backbont only support xception_41/xception_65/xception_71")
     return bottleneck_params
 
 

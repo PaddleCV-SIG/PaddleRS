@@ -47,5 +47,3 @@ visualdl --logdir output/deeplabv3p_resnet50_multi_channel/vdl_log --port 8001
 ```
 
 服务启动后，使用浏览器打开 https://0.0.0.0:8001 或 https://localhost:8001
-
-

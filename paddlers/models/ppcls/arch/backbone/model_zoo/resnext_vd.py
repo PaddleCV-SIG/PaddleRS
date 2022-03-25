@@ -280,38 +280,26 @@ def ResNeXt50_vd_64x4d(pretrained=False, use_ssld=False, **kwargs):
 def ResNeXt101_vd_32x4d(pretrained=False, use_ssld=False, **kwargs):
     model = ResNeXt(layers=101, cardinality=32, **kwargs)
     _load_pretrained(
-        pretrained,
-        model,
-        MODEL_URLS["ResNeXt101_vd_32x4d"],
-        use_ssld=use_ssld)
+        pretrained, model, MODEL_URLS["ResNeXt101_vd_32x4d"], use_ssld=use_ssld)
     return model
 
 
 def ResNeXt101_vd_64x4d(pretrained=False, use_ssld=False, **kwargs):
     model = ResNeXt(layers=101, cardinality=64, **kwargs)
     _load_pretrained(
-        pretrained,
-        model,
-        MODEL_URLS["ResNeXt101_vd_64x4d"],
-        use_ssld=use_ssld)
+        pretrained, model, MODEL_URLS["ResNeXt101_vd_64x4d"], use_ssld=use_ssld)
     return model
 
 
 def ResNeXt152_vd_32x4d(pretrained=False, use_ssld=False, **kwargs):
     model = ResNeXt(layers=152, cardinality=32, **kwargs)
     _load_pretrained(
-        pretrained,
-        model,
-        MODEL_URLS["ResNeXt152_vd_32x4d"],
-        use_ssld=use_ssld)
+        pretrained, model, MODEL_URLS["ResNeXt152_vd_32x4d"], use_ssld=use_ssld)
     return model
 
 
 def ResNeXt152_vd_64x4d(pretrained=False, use_ssld=False, **kwargs):
     model = ResNeXt(layers=152, cardinality=64, **kwargs)
     _load_pretrained(
-        pretrained,
-        model,
-        MODEL_URLS["ResNeXt152_vd_64x4d"],
-        use_ssld=use_ssld)
+        pretrained, model, MODEL_URLS["ResNeXt152_vd_64x4d"], use_ssld=use_ssld)
     return model

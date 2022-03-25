@@ -10,20 +10,17 @@ if not os.path.exists(data_dir):
 
 # define transforms
 train_transforms = T.Compose([
-    T.RandomDistort(),
-    T.RandomExpand(),
-    T.RandomCrop(),
-    T.RandomHorizontalFlip(),
-    T.BatchRandomResize(
+    T.RandomDistort(), T.RandomExpand(), T.RandomCrop(),
+    T.RandomHorizontalFlip(), T.BatchRandomResize(
         target_sizes=[320, 352, 384, 416, 448, 480, 512, 544, 576, 608],
-        interp='RANDOM'),
-    T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        interp='RANDOM'), T.Normalize(
+            mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 ])
 
 eval_transforms = T.Compose([
-    T.Resize(target_size=608, interp='CUBIC'),
-    T.Normalize(
-        mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+    T.Resize(
+        target_size=608, interp='CUBIC'), T.Normalize(
+            mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 ])
 
 # define dataset

@@ -366,8 +366,8 @@ class LeViT(nn.Layer):
         down_ops.append([''])
         resolution = img_size // patch_size
         for i, (ed, kd, dpth, nh, ar, mr, do) in enumerate(
-                zip(embed_dim, key_dim, depth, num_heads, attn_ratio,
-                    mlp_ratio, down_ops)):
+                zip(embed_dim, key_dim, depth, num_heads, attn_ratio, mlp_ratio,
+                    down_ops)):
             for _ in range(dpth):
                 self.blocks.append(
                     Residual(

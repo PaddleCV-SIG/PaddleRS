@@ -452,8 +452,8 @@ def load_pretrain_weights(model, pretrain_weights=None, model_name=None):
             for k in model_state_dict:
                 if k not in param_state_dict:
                     logging.warning("{} is not in pretrained model".format(k))
-                elif list(param_state_dict[k].shape) != list(model_state_dict[
-                        k].shape):
+                elif list(param_state_dict[k].shape) != list(model_state_dict[k]
+                                                             .shape):
                     logging.warning(
                         "[SKIP] Shape of pretrained params {} doesn't match.(Pretrained: {}, Actual: {})"
                         .format(k, param_state_dict[k].shape, model_state_dict[

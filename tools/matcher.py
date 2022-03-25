@@ -24,7 +24,7 @@ except ImportError:
     import gdal
 
 
-class MatchError (Exception):
+class MatchError(Exception):
     def __str__(self):
         return "Cannot match two images."
 
@@ -45,7 +45,8 @@ def _calcu_tf(im1, im2):
                                       for m in good_matches]).reshape(-1, 1, 2)
     den_automatic_points = np.float32([kp1[m[0].trainIdx].pt \
                                       for m in good_matches]).reshape(-1, 1, 2)
-    H, _ = cv2.findHomography(src_automatic_points, den_automatic_points, cv2.RANSAC, 5.0)
+    H, _ = cv2.findHomography(src_automatic_points, den_automatic_points,
+                              cv2.RANSAC, 5.0)
     return H
 
 
@@ -92,10 +93,11 @@ def matching(im1_path, im2_path, im1_bands=[1, 2, 3], im2_bands=[1, 2, 3]):
     # test
     # im2_t = cv2.warpPerspective(im2, H, (im1.shape[1], im1.shape[0]))
     # cv2.imwrite("B_M.png", cv2.cvtColor(im2_t, cv2.COLOR_RGB2BGR))
-    im2_arr_t = cv2.warpPerspective(im2_ras.getArray(), H, (im1_ras.width, im1_ras.height))
+    im2_arr_t = cv2.warpPerspective(im2_ras.getArray(), H,
+                                    (im1_ras.width, im1_ras.height))
     save_path = im2_ras.path.replace(("." + im2_ras.ext_type), "_M.tif")
     _img2tif(im2_arr_t, save_path, im1_ras.proj, im1_ras.geot, im1_ras.datatype)
-    
+
 
 parser = argparse.ArgumentParser(description="input parameters")
 parser.add_argument("--im1_path", type=str, required=True, \
@@ -106,7 +108,6 @@ parser.add_argument("--im1_bands", type=int, nargs="+", default=[1, 2, 3], \
                     help="The time1 image's band used for matching, RGB or monochrome, `[1, 2, 3]` is the default.")
 parser.add_argument("--im2_bands", type=int, nargs="+", default=[1, 2, 3], \
                     help="The time2 image's band used for matching, RGB or monochrome, `[1, 2, 3]` is the default.")
-
 
 if __name__ == "__main__":
     args = parser.parse_args()

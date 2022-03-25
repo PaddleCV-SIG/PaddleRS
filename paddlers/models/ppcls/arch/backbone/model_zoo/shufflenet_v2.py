@@ -98,11 +98,7 @@ class ConvBNLayer(Layer):
 
 
 class InvertedResidual(Layer):
-    def __init__(self,
-                 in_channels,
-                 out_channels,
-                 stride,
-                 act="relu",
+    def __init__(self, in_channels, out_channels, stride, act="relu",
                  name=None):
         super(InvertedResidual, self).__init__()
         self._conv_pw = ConvBNLayer(
@@ -146,11 +142,7 @@ class InvertedResidual(Layer):
 
 
 class InvertedResidualDS(Layer):
-    def __init__(self,
-                 in_channels,
-                 out_channels,
-                 stride,
-                 act="relu",
+    def __init__(self, in_channels, out_channels, stride, act="relu",
                  name=None):
         super(InvertedResidualDS, self).__init__()
 

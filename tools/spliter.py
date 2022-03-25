@@ -31,8 +31,10 @@ def split_data(image_path, block_size, save_folder):
     for r in range(rows):
         for c in range(cols):
             loc_start = (c * block_size, r * block_size)
-            title = Image.fromarray(raster.getArray(loc_start, (block_size, block_size)))
-            save_path = osp.join(save_folder, (image_name + "_" + str(r) + "_" + str(c) + ".png"))
+            title = Image.fromarray(
+                raster.getArray(loc_start, (block_size, block_size)))
+            save_path = osp.join(save_folder, (
+                image_name + "_" + str(r) + "_" + str(c) + ".png"))
             title.save(save_path, "PNG")
             print("-- {:d}/{:d} --".format(int(r * cols + c + 1), total_number))
 
@@ -44,7 +46,6 @@ parser.add_argument("--block_size", type=int, default=512, \
                     help="The size of image block, `512` is the default.")
 parser.add_argument("--save_folder", type=str, default="output", \
                     help="The folder path to save the results, `output` is the default.")
-
 
 if __name__ == "__main__":
     args = parser.parse_args()

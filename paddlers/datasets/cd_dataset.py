@@ -55,7 +55,7 @@ class CDDataset(Dataset):
         self.labels = list()
         self.with_seg_labels = with_seg_labels
         if self.with_seg_labels:
-            num_items = 5   # 3+2
+            num_items = 5  # 3+2
         else:
             num_items = 3
 
@@ -66,15 +66,15 @@ class CDDataset(Dataset):
                 for line in f:
                     item = line.strip()
                     self.labels.append(item)
-                    
+
         with open(file_list, encoding=get_encoding(file_list)) as f:
             for line in f:
                 items = line.strip().split(DELIMETER)
 
                 if len(items) != num_items:
-                    raise Exception("Line[{}] in file_list[{}] has an incorrect number of file paths.".format(
-                        line.strip(), file_list
-                    ))
+                    raise Exception(
+                        "Line[{}] in file_list[{}] has an incorrect number of file paths.".
+                        format(line.strip(), file_list))
 
                 items = list(map(path_normalization, items))
                 if not all(map(is_pic, items)):
@@ -106,10 +106,11 @@ class CDDataset(Dataset):
                 item_dict = dict(
                     image_t1=full_path_im_t1,
                     image_t2=full_path_im_t2,
-                    mask=full_path_label
-                )
+                    mask=full_path_label)
                 if with_seg_labels:
-                    item_dict['aux_masks'] = [full_path_seg_label_t1, full_path_seg_label_t2]
+                    item_dict['aux_masks'] = [
+                        full_path_seg_label_t1, full_path_seg_label_t2
+                    ]
 
                 self.file_list.append(item_dict)
 

@@ -691,8 +691,7 @@ class MixNet(nn.Layer):
             "final_pool", nn.AvgPool2D(
                 kernel_size=7, stride=1))
 
-        self.output = nn.Linear(
-            in_features=in_channels, out_features=class_num)
+        self.output = nn.Linear(in_features=in_channels, out_features=class_num)
 
     def forward(self, x):
         x = self.features(x)

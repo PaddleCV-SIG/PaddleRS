@@ -344,8 +344,7 @@ def run(dataloader,
     for k in fetchs:
         metric_dict[k] = fetchs[k][1]
 
-    metric_dict["batch_time"] = AverageMeter(
-        'batch_cost', '.5f', postfix=" s,")
+    metric_dict["batch_time"] = AverageMeter('batch_cost', '.5f', postfix=" s,")
     metric_dict["reader_time"] = AverageMeter(
         'reader_cost', '.5f', postfix=" s,")
 

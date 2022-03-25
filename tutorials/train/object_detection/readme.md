@@ -1,5 +1,5 @@
 The detection training demo:
-* dataset: AIR-SARShip-1.0 
+* dataset: AIR-SARShip-1.0
 * target: ship
 * model: faster_rcnn
 
