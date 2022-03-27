@@ -58,8 +58,14 @@ PaddleRS是xxx、xxx、xxx等遥感科研院所共同基于飞桨开发的遥感
 * 准备数据集
    * [遥感数据](./docs/data/rs_data_cn.md)
    * [智能标注工具EISeg](https://github.com/PaddlePaddle/PaddleSeg/tree/release/2.4/EISeg)
+   * [遥感数据处理脚本](./docs/data/tools.md)
+* APIs
+   * [模型库](./docs/apis/model_zoo.md)
+   * [数据增强](./docs/apis/transforms.md)
+* 模型训练
+* 推理部署
+* 应用案例
 
-   * [遥感数据处理脚本](./docs/tools.md)
 
 
 ## 许可证书
@@ -68,26 +74,17 @@ PaddleRS是xxx、xxx、xxx等遥感科研院所共同基于飞桨开发的遥感
 
 ## 贡献说明 <img src="./docs/images/love.png" width="30"/>
 
-本项目的发布受Apache 2.0 license许可认证。
+我们非常欢迎你可以为PaddleRS提供代码，也十分感谢你的反馈。代码注释规范请参考[PaddleRS代码注释规范](https://github.com/PaddleCV-SIG/PaddleRS/wiki/PaddleRS代码注释规范)。
 
 ## 学术引用 <img src="./docs/images/yinyong.png" width="30"/>
 
 如果我们的项目在学术上帮助到你，请考虑以下引用：
 
 ```latex
-@misc{liu2021paddleseg,
-      title={PaddleSeg: A High-Efficient Development Toolkit for Image Segmentation},
-      author={Yi Liu and Lutao Chu and Guowei Chen and Zewu Wu and Zeyu Chen and Baohua Lai and Yuying Hao},
-      year={2021},
-      eprint={2101.06175},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV}
-}
-
-@misc{paddleseg2019,
-    title={PaddleSeg, End-to-end image segmentation kit based on PaddlePaddle},
+@misc{paddlers2022,
+    title={PaddleRS, Awesome Remote Sensing Toolkit based on PaddlePaddle},
     author={PaddlePaddle Authors},
-    howpublished = {\url{https://github.com/PaddlePaddle/PaddleSeg}},
-    year={2019}
+    howpublished = {\url{https://github.com/PaddleCV-SIG/PaddleRS}},
+    year={2022}
 }
 ```
