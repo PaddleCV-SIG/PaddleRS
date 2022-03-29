@@ -36,7 +36,7 @@ from .utils import seg_metrics as metrics
 
 __all__ = [
     "CDNet", "UNetEarlyFusion", "UNetSiamConc", "UNetSiamDiff", "STANet", "BIT",
-    "SNUNet", "DSIFN", "DSAMNet"
+    "SNUNet", "DSIFN", "DSAMNet", "ChangeStar"
 ]
 
 
@@ -147,8 +147,8 @@ class BaseChangeDetector(BaseModel):
             outputs['conf_mat'] = metrics.confusion_matrix(pred, label,
                                                            self.num_classes)
         if mode == 'train':
-            if hasattr(net, 'USE_MULTITASK_DECODER'
-                       ) and net.USE_MULTITASK_DECODER is True:
+            if hasattr(net, 'USE_MULTITASK_DECODER') and \
+                net.USE_MULTITASK_DECODER is True:
                 # CD+Seg
                 if len(inputs) != 5:
                     raise ValueError(
@@ -399,8 +399,8 @@ class BaseChangeDetector(BaseModel):
         local_rank = paddle.distributed.get_rank()
         if nranks > 1:
             # Initialize parallel environment if not done.
-            if not paddle.distributed.parallel.parallel_helper._is_parallel_ctx_initialized(
-            ):
+            if not (paddle.distributed.parallel.parallel_helper.
+                    _is_parallel_ctx_initialized()):
                 paddle.distributed.init_parallel_env()
 
         batch_size_each_card = get_single_card_bs(batch_size)
@@ -410,7 +410,8 @@ class BaseChangeDetector(BaseModel):
             logging.warning(
                 "Segmenter only supports batch_size=1 for each gpu/cpu card " \
                 "during evaluation, so batch_size " \
-                "is forcibly set to {}.".format(batch_size))
+                "is forcibly set to {}.".format(batch_size)
+            )
         self.eval_data_loader = self.build_data_loader(
             eval_dataset, batch_size=batch_size, mode='eval')
 
@@ -853,6 +854,38 @@ class DSAMNet(BaseChangeDetector):
                     paddleseg.models.DiceLoss(), paddleseg.models.DiceLoss()
                 ],
                 'coef': [1.0, 0.05, 0.05]
+            }
+        else:
+            return super().default_loss()
+
+
+class ChangeStar(BaseChangeDetector):
+    def __init__(self,
+                 num_classes=2,
+                 use_mixed_loss=False,
+                 mid_channels=256,
+                 inner_channels=16,
+                 num_convs=4,
+                 scale_factor=4.0,
+                 **params):
+        params.update({
+            'mid_channels': mid_channels,
+            'inner_channels': inner_channels,
+            'num_convs': num_convs,
+            'scale_factor': scale_factor
+        })
+        super(ChangeStar, self).__init__(
+            model_name='ChangeStar',
+            num_classes=num_classes,
+            use_mixed_loss=use_mixed_loss,
+            **params)
+
+    def default_loss(self):
+        if self.use_mixed_loss is False:
+            return {
+                # XXX: make sure the shallow copy works correctly here.
+                'types': [paddleseg.models.CrossEntropyLoss()] * 4,
+                'coef': [1.0] * 4
             }
         else:
             return super().default_loss()
