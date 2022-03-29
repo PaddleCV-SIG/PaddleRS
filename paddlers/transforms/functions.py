@@ -303,8 +303,10 @@ def select_bands(im, band_list=[1, 2, 3]):
     Returns:
         np.ndarray: The image after band selected.
     """
-    if not isinstance(band_list, list):
-        raise TypeError("band_list must be list.")
+    if len(im.shape) == 2:  # just have one channel
+        return im
+    if not isinstance(band_list, list) or len(band_list) == 0:
+        raise TypeError("band_list must be non empty list.")
     total_band = im.shape[-1]
     result = []
     for band in band_list:
@@ -312,7 +314,7 @@ def select_bands(im, band_list=[1, 2, 3]):
         if band < 0 or band >= total_band:
             raise ValueError("The element in band_list must > 1 and <= {}.".
                              format(str(total_band)))
-        result.append()
+        result.append(im[:, :, band])
     ima = np.stack(result, axis=0)
     return ima
 
