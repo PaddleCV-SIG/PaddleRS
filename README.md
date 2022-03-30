@@ -73,7 +73,8 @@ PaddleRS是xxx、xxx、xxx等遥感科研院所共同基于飞桨开发的遥感
 
 * [快速上手PaddleRS](./tutorials/train/README.md)
 * 准备数据集
-   * [遥感数据](./docs/data/rs_data_cn.md)
+   * [遥感数据介绍](./docs/data/rs_data_cn.md)
+   * [遥感数据集](./docs/data/dataset_cn.md)
    * [智能标注工具EISeg](https://github.com/PaddlePaddle/PaddleSeg/tree/release/2.4/EISeg)
    * [遥感数据处理脚本](./docs/data/tools.md)
 * APIs
@@ -82,6 +83,8 @@ PaddleRS是xxx、xxx、xxx等遥感科研院所共同基于飞桨开发的遥感
 * 模型训练
 * 推理部署
 * 应用案例
+  * [【官方】第十一届 “中国软件杯”大学生软件设计大赛—A组：变化检测](https://aistudio.baidu.com/aistudio/projectdetail/3684588)
+  * [使用超分模块提高真实的低分辨率无人机影像的分割精度](https://aistudio.baidu.com/aistudio/projectdetail/3696814)
 
 ## 许可证书
 
