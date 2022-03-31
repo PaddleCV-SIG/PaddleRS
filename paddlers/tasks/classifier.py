@@ -20,6 +20,7 @@ import paddle
 import paddle.nn.functional as F
 from paddle.static import InputSpec
 import paddlers.models.ppcls as paddleclas
+import paddlers.custom_models.cls as cls
 import paddlers
 from paddlers.transforms import arrange_transforms
 from paddlers.utils import get_single_card_bs, DisablePrint
@@ -31,12 +32,15 @@ from paddlers.models.ppcls.data.postprocess import build_postprocess
 from paddlers.utils.checkpoint import cls_pretrain_weights_dict
 from paddlers.transforms import ImgDecoder, Resize
 
-__all__ = ["ResNet50_vd", "MobileNetV3_small_x1_0", "HRNet_W18_C"]
+__all__ = [
+    "ResNet50_vd", "MobileNetV3_small_x1_0", "HRNet_W18_C", "CondenseNetV2_b"
+]
 
 
 class BaseClassifier(BaseModel):
     def __init__(self,
                  model_name,
+                 in_channels=3,
                  num_classes=2,
                  use_mixed_loss=False,
                  **params):
@@ -44,10 +48,12 @@ class BaseClassifier(BaseModel):
         if 'with_net' in self.init_params:
             del self.init_params['with_net']
         super(BaseClassifier, self).__init__('classifier')
-        if not hasattr(paddleclas.arch.backbone, model_name):
+        if not hasattr(paddleclas.arch.backbone, model_name) and \
+           not hasattr(cls.models, model_name):
             raise Exception("ERROR: There's no model named {}.".format(
                 model_name))
         self.model_name = model_name
+        self.in_channels = in_channels
         self.num_classes = num_classes
         self.use_mixed_loss = use_mixed_loss
         self.metrics = None
@@ -61,8 +67,17 @@ class BaseClassifier(BaseModel):
 
     def build_net(self, **params):
         with paddle.utils.unique_name.guard():
-            net = paddleclas.arch.backbone.__dict__[self.model_name](
-                class_num=self.num_classes, **params)
+            model = dict(paddleclas.arch.backbone.__dict__,
+                         **cls.models.__dict__)[self.model_name]
+            # TODO: Determine whether there is in_channels
+            try:
+                net = model(
+                    class_num=self.num_classes,
+                    in_channels=self.in_channels,
+                    **params)
+            except:
+                net = model(class_num=self.num_classes, **params)
+                self.in_channels = 3
         return net
 
     def _fix_transforms_shape(self, image_shape):
@@ -121,12 +136,12 @@ class BaseClassifier(BaseModel):
         return outputs
 
     def default_metric(self):
-        default_config = [{"TopkAcc":{"topk": [1, 5]}}]
-        return build_metrics(default_config) 
+        default_config = [{"TopkAcc": {"topk": [1, 5]}}]
+        return build_metrics(default_config)
 
     def default_loss(self):
         # TODO: use mixed loss and other loss
-        default_config = [{"CELoss":{"weight": 1.0}}]
+        default_config = [{"CELoss": {"weight": 1.0}}]
         return build_loss(default_config)
 
     def default_optimizer(self,
@@ -229,8 +244,7 @@ class BaseClassifier(BaseModel):
                                 "set pretrain_weights to be None.".format(
                                     cls_pretrain_weights_dict[self.model_name][
                                         0]))
-                pretrain_weights = cls_pretrain_weights_dict[self.model_name][
-                    0]
+                pretrain_weights = cls_pretrain_weights_dict[self.model_name][0]
         elif pretrain_weights is not None and osp.exists(pretrain_weights):
             if osp.splitext(pretrain_weights)[-1] != '.pdparams':
                 logging.error(
@@ -414,8 +428,8 @@ class BaseClassifier(BaseModel):
         if isinstance(img_file, list):
             prediction = [{
                 'class_ids_map': l,
-                'scores_map': s, 
-                'label_names_map': n, 
+                'scores_map': s,
+                'label_names_map': n,
             } for l, s, n in zip(label_list, score_list, name_list)]
         else:
             prediction = {
@@ -493,11 +507,9 @@ class BaseClassifier(BaseModel):
             batch_restore_list.append(restore_list)
         return batch_restore_list
 
+
 class ResNet50_vd(BaseClassifier):
-    def __init__(self,
-                 num_classes=2,
-                 use_mixed_loss=False,
-                 **params):
+    def __init__(self, num_classes=2, use_mixed_loss=False, **params):
         super(ResNet50_vd, self).__init__(
             model_name='ResNet50_vd',
             num_classes=num_classes,
@@ -506,10 +518,7 @@ class ResNet50_vd(BaseClassifier):
 
 
 class MobileNetV3_small_x1_0(BaseClassifier):
-    def __init__(self,
-                 num_classes=2,
-                 use_mixed_loss=False,
-                 **params):
+    def __init__(self, num_classes=2, use_mixed_loss=False, **params):
         super(MobileNetV3_small_x1_0, self).__init__(
             model_name='MobileNetV3_small_x1_0',
             num_classes=num_classes,
@@ -518,12 +527,18 @@ class MobileNetV3_small_x1_0(BaseClassifier):
 
 
 class HRNet_W18_C(BaseClassifier):
-    def __init__(self,
-                 num_classes=2,
-                 use_mixed_loss=False,
-                 **params):
+    def __init__(self, num_classes=2, use_mixed_loss=False, **params):
         super(HRNet_W18_C, self).__init__(
             model_name='HRNet_W18_C',
+            num_classes=num_classes,
+            use_mixed_loss=use_mixed_loss,
+            **params)
+
+
+class CondenseNetV2_b(BaseClassifier):
+    def __init__(self, num_classes=2, use_mixed_loss=False, **params):
+        super(CondenseNetV2_b, self).__init__(
+            model_name='CondenseNetV2_b',
             num_classes=num_classes,
             use_mixed_loss=use_mixed_loss,
             **params)

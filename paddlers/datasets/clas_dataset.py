@@ -64,16 +64,17 @@ class ClasDataset(Dataset):
                         "so the space cannot be in the image or label path, but the line[{}] of " \
                         " file_list[{}] has a space in the image or label path.".format(line, file_list))
                 items[0] = path_normalization(items[0])
-                if not is_pic(items[0]):
-                    continue
                 full_path_im = osp.join(data_dir, items[0])
                 label = items[1]
+                if not is_pic(full_path_im):
+                    continue
                 if not osp.exists(full_path_im):
                     raise IOError('Image file {} does not exist!'.format(
                         full_path_im))
                 if not label.isdigit():
-                    raise ValueError('Label {} does not convert to number(int)!'.format(
-                        label))
+                    raise ValueError(
+                        'Label {} does not convert to number(int)!'.format(
+                            label))
                 self.file_list.append({
                     'image': full_path_im,
                     'label': int(label)

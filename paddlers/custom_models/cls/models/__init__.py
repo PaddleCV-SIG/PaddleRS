@@ -12,4 +12,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from . import models
+from .condensenet_v2 import CondenseNetV2_a, CondenseNetV2_b, CondenseNetV2_c
