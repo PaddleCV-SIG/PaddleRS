@@ -13,15 +13,13 @@
 |change_detection/unet_ef.py | 变化检测 | FC-EF |
 |change_detection/unet_siamconc.py | 变化检测 | FC-Siam-conc |
 |change_detection/unet_siamdiff.py | 变化检测 | FC-Siam-diff |
-|classification/hrnet.py| 场景分类 | HRNet |
+|classification/hrnet.py | 场景分类 | HRNet |
 |classification/mobilenetv3.py | 场景分类 | MobileNetV3 |
 |classification/resnet50_vd.py | 场景分类 | ResNet50-vd |
 |image_restoration/drn.py | 超分辨率 | DRN |
 |image_restoration/esrgan.py | 超分辨率 | ESRGAN |
 |image_restoration/lesrcnn.py | 超分辨率 | LESRCNN |
-|object_detection/fasterrcnn.py | 目标检测 | Faster R-CNN |
-|object_detection/maskrcnn.py | 目标检测 | Mask R-CNN |
-|object_detection/picodet.py | 目标检测 | PicoDet |
+|object_detection/faster_rcnn.py | 目标检测 | Faster R-CNN |
 |object_detection/ppyolo.py | 目标检测 | PP-YOLO |
 |object_detection/ppyolotiny.py | 目标检测 | PP-YOLO Tiny |
 |object_detection/ppyolov2.py | 目标检测 | PP-YOLOv2 |
@@ -29,7 +27,7 @@
 |semantic_segmentation/bisenetv2.py | 图像分割 | BiSeNet V2 |
 |semantic_segmentation/deeplabv3p.py | 图像分割 | DeepLab V3+ |
 |semantic_segmentation/farseg.py | 图像分割 | FarSeg |
-|semantic_segmentation/fastscnn.py | 图像分割 | Fast-SCNN |
+|semantic_segmentation/fast_scnn.py | 图像分割 | Fast-SCNN |
 |semantic_segmentation/hrnet.py | 图像分割 | HRNet |
 |semantic_segmentation/unet.py | 图像分割 | UNet |
 
