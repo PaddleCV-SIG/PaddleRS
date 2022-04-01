@@ -12,19 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import paddle.nn as nn
+import time
 
 
-def constant_init(param, **kwargs):
-    initializer = nn.initializer.Constant(**kwargs)
-    initializer(param, param.block)
+class Timer(object):
+    def __init__(self, func):
+        self.func = func
 
-
-def normal_init(param, **kwargs):
-    initializer = nn.initializer.Normal(**kwargs)
-    initializer(param, param.block)
-
-
-def kaiming_normal_init(param, **kwargs):
-    initializer = nn.initializer.KaimingNormal(**kwargs)
-    initializer(param, param.block)
+    def __call__(self, *args, **kwds):
+        start_time = time.time()
+        func_t = self.func(*args, **kwds)
+        print("Total time: {0}.".format(time.time() - start_time))
+        return func_t
