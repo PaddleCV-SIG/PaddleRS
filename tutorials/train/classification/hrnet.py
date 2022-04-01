@@ -64,8 +64,8 @@ eval_dataset = pdrs.datasets.ClasDataset(
     shuffle=False)
 
 # 使用默认参数构建HRNet模型
-# 目前已支持的模型请参考：https://github.com/PaddlePaddle/paddlers/blob/develop/docs/apis/models/change_detection.md
-# 模型输入参数请参考：https://github.com/PaddleCV-SIG/PaddleRS/blob/develop/paddlers/tasks/changedetector.py
+# 目前已支持的模型请参考：https://github.com/PaddlePaddle/paddlers/blob/develop/docs/apis/models/classification.md
+# 模型输入参数请参考：https://github.com/PaddleCV-SIG/PaddleRS/blob/develop/paddlers/tasks/classifier.py
 model = pdrs.tasks.HRNet_W18_C(num_classes=len(train_dataset.labels))
 
 # 执行模型训练
