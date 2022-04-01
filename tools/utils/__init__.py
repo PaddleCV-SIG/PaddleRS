@@ -17,3 +17,4 @@ import os.path as osp
 sys.path.insert(0, osp.abspath(".."))  # add workspace
 
 from .raster import Raster, raster2uint8
+from .timer import Timer
