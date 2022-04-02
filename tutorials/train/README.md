@@ -1,6 +1,6 @@
 # 使用教程——训练模型
 
-本目录下整理了使用PaddleRS训练模型的示例代码。代码中均提供了示例数据的自动下载，并均使用单块GPU对模型进行训练。
+本目录下整理了使用PaddleRS训练模型的示例代码。代码中均提供了示例数据的自动下载，并均使用GPU对模型进行训练。
 
 |示例代码路径 | 任务 | 模型 |
 |------|--------|---------|
@@ -45,12 +45,18 @@
 - [PaddleRS安装](../../docs/install.md)
 
 ## 开始训练
-* 在安装PaddleRS后，使用如下命令开始训练。代码会自动下载训练数据, 并均使用单张GPU卡进行训练。以DeepLab V3+图像分割模型为例：
+* 在安装PaddleRS后，使用如下命令进行单卡训练。代码会自动下载训练数据。以DeepLab V3+图像分割模型为例：
 
 ```commandline
 # 指定需要使用的GPU设备编号
 export CUDA_VISIBLE_DEVICES=0
 python tutorials/train/semantic_segmentation/deeplabv3p.py
+```
+
+* 如需使用多块GPU进行训练，例如使用2张显卡时，执行如下命令：
+
+```commandline
+python -m paddle.distributed.launch --gpus 0,1 tutorials/train/semantic_segmentation/deeplabv3p.py
 ```
 
 ## VisualDL可视化训练指标
