@@ -36,7 +36,7 @@ class UNetEarlyFusion(nn.Layer):
     """
 
     def __init__(self, in_channels, num_classes, use_dropout=False):
-        super().__init__()
+        super(UNetEarlyFusion, self).__init__()
 
         C1, C2, C3, C4, C5 = 16, 32, 64, 128, 256
 

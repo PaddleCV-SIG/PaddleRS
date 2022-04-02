@@ -61,11 +61,11 @@ def load_model(model_dir, **params):
         model_info = yaml.load(f.read(), Loader=yaml.Loader)
     f.close()
 
-    version = model_info['version']
-    if int(version.split('.')[0]) < 2:
-        raise Exception(
-            'Current version is {}, a model trained by PaddleRS={} cannot be load.'.
-            format(paddlers.__version__, version))
+    # version = model_info['version']
+    # if int(version.split('.')[0]) < 2:
+    #     raise Exception(
+    #         'Current version is {}, a model trained by PaddleRS={} cannot be load.'.
+    #         format(paddlers.__version__, version))
 
     status = model_info['status']
     with_net = params.get('with_net', True)
