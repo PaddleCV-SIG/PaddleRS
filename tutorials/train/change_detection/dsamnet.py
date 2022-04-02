@@ -21,7 +21,7 @@ pdrs.utils.download_and_decompress(airchange_dataset, path=DATA_DIR)
 
 # 定义训练和验证时使用的数据变换（数据增强、预处理等）
 # 使用Compose组合多种变换方式。Compose中包含的变换将按顺序串行执行
-# API说明：https://github.com/PaddlePaddle/paddlers/blob/develop/docs/apis/transforms/transforms.md
+# API说明：https://github.com/PaddleCV-SIG/PaddleRS/blob/develop/docs/apis/transforms.md
 train_transforms = T.Compose([
     # 随机裁剪
     T.RandomCrop(
@@ -45,7 +45,6 @@ eval_transforms = T.Compose([
 ])
 
 # 分别构建训练和验证所用的数据集
-# API说明：https://github.com/PaddlePaddle/paddlers/blob/develop/docs/apis/datasets.md
 train_dataset = pdrs.datasets.CDDataset(
     data_dir=DATA_DIR,
     file_list=TRAIN_FILE_LIST_PATH,
@@ -67,13 +66,11 @@ eval_dataset = pdrs.datasets.CDDataset(
     binarize_labels=True)
 
 # 使用默认参数构建DSAMNet模型
-# 目前已支持的模型请参考：https://github.com/PaddlePaddle/paddlers/blob/develop/docs/apis/models/change_detection.md
+# 目前已支持的模型请参考：https://github.com/PaddleCV-SIG/PaddleRS/blob/develop/docs/apis/model_zoo.md
 # 模型输入参数请参考：https://github.com/PaddleCV-SIG/PaddleRS/blob/develop/paddlers/tasks/changedetector.py
 model = pdrs.tasks.DSAMNet()
 
 # 执行模型训练
-# API说明：https://github.com/PaddlePaddle/paddlers/blob/develop/docs/parameters.md
-# 此外，支持使用VisualDL查看训练指标，具体方法请参考：https://github.com/PaddlePaddle/paddlers/blob/develop/docs/visualdl.md
 model.train(
     num_epochs=5,
     train_dataset=train_dataset,
