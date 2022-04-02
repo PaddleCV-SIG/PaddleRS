@@ -24,11 +24,7 @@
 |object_detection/ppyolotiny.py | 目标检测 | PP-YOLO Tiny |
 |object_detection/ppyolov2.py | 目标检测 | PP-YOLOv2 |
 |object_detection/yolov3.py | 目标检测 | YOLOv3 |
-|semantic_segmentation/bisenetv2.py | 图像分割 | BiSeNet V2 |
 |semantic_segmentation/deeplabv3p.py | 图像分割 | DeepLab V3+ |
-|semantic_segmentation/farseg.py | 图像分割 | FarSeg |
-|semantic_segmentation/fast_scnn.py | 图像分割 | Fast-SCNN |
-|semantic_segmentation/hrnet.py | 图像分割 | HRNet |
 |semantic_segmentation/unet.py | 图像分割 | UNet |
 
 <!-- 可参考API接口说明了解示例代码中的API：
