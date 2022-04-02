@@ -20,7 +20,7 @@ import paddle
 import paddle.nn.functional as F
 from paddle.static import InputSpec
 import paddlers.models.ppcls as paddleclas
-import paddlers.custom_models.cls as cls
+import paddlers.custom_models.cls as cmcls
 import paddlers
 from paddlers.transforms import arrange_transforms
 from paddlers.utils import get_single_card_bs, DisablePrint
@@ -49,7 +49,7 @@ class BaseClassifier(BaseModel):
             del self.init_params['with_net']
         super(BaseClassifier, self).__init__('classifier')
         if not hasattr(paddleclas.arch.backbone, model_name) and \
-           not hasattr(cls.models, model_name):
+           not hasattr(cmcls, model_name):
             raise Exception("ERROR: There's no model named {}.".format(
                 model_name))
         self.model_name = model_name
@@ -68,7 +68,7 @@ class BaseClassifier(BaseModel):
     def build_net(self, **params):
         with paddle.utils.unique_name.guard():
             model = dict(paddleclas.arch.backbone.__dict__,
-                         **cls.models.__dict__)[self.model_name]
+                         **cmcls.__dict__)[self.model_name]
             # TODO: Determine whether there is in_channels
             try:
                 net = model(
