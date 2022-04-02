@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# 变化检测模型FC-Siam-conc训练示例脚本
+# 变化检测模型FC-EF训练示例脚本
 # 执行此脚本前，请确认已正确安装PaddleRS库
 
 import paddlers as pdrs
@@ -13,7 +13,7 @@ TRAIN_FILE_LIST_PATH = './data/airchange/train.txt'
 # 验证集`file_list`文件路径
 EVAL_FILE_LIST_PATH = './data/airchange/eval.txt'
 # 实验目录，保存输出的模型权重和结果
-EXP_DIR = './output/unet_siamconc/'
+EXP_DIR = './output/fc_ef/'
 
 # 下载和解压AirChange数据集
 airchange_dataset = 'http://mplab.sztaki.hu/~bcsaba/test/SZTAKI_AirChange_Benchmark.zip'
@@ -65,10 +65,10 @@ eval_dataset = pdrs.datasets.CDDataset(
     with_seg_labels=False,
     binarize_labels=True)
 
-# 使用默认参数构建FC-Siam-conc模型
+# 使用默认参数构建FC-EF模型
 # 目前已支持的模型请参考：https://github.com/PaddleCV-SIG/PaddleRS/blob/develop/docs/apis/model_zoo.md
 # 模型输入参数请参考：https://github.com/PaddleCV-SIG/PaddleRS/blob/develop/paddlers/tasks/changedetector.py
-model = pdrs.tasks.UNetSiamConc()
+model = pdrs.tasks.FCEarlyFusion()
 
 # 执行模型训练
 model.train(
