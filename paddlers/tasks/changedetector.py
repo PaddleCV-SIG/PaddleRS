@@ -98,9 +98,11 @@ class BaseChangeDetector(BaseModel):
         else:
             image_shape = [None, 3, -1, -1]
         self.fixed_input_shape = image_shape
-        input_spec = InputSpec(shape=image_shape, name='image', dtype='float32')
-        # Same input spec for dual temporal phases
-        return [input_spec, input_spec]
+        return [
+            InputSpec(
+                shape=image_shape, name='image', dtype='float32'), InputSpec(
+                    shape=image_shape, name='image2', dtype='float32')
+        ]
 
     def run(self, net, inputs, mode):
         net_out = net(inputs[0], inputs[1])

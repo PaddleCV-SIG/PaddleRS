@@ -35,20 +35,23 @@ class Predictor(object):
                  memory_optimize=True,
                  max_trt_batch_size=1,
                  trt_precision_mode='float32'):
-        """ 创建Paddle Predictor
-            Args:
-                model_dir: 模型路径（必须是导出的部署或量化模型）
-                use_gpu: 是否使用gpu，默认False
-                gpu_id: 使用gpu的id，默认0
-                cpu_thread_num：使用cpu进行预测时的线程数，默认为1
-                use_mkl: 是否使用mkldnn计算库，CPU情况下使用，默认False
-                mkl_thread_num: mkldnn计算线程数，默认为4
-                use_trt: 是否使用TensorRT，默认False
-                use_glog: 是否启用glog日志, 默认False
-                memory_optimize: 是否启动内存优化，默认True
-                max_trt_batch_size: 在使用TensorRT时配置的最大batch size，默认1
-                trt_precision_mode：在使用TensorRT时采用的精度，可选值['float32', 'float16']。默认'float32',
+        """ 
+        创建Paddle Predictor
+
+        Args:
+            model_dir: 模型路径（必须是导出的部署或量化模型）。
+            use_gpu: 是否使用GPU，默认为False。
+            gpu_id: 使用GPU的ID，默认为0。
+            cpu_thread_num：使用cpu进行预测时的线程数，默认为1。
+            use_mkl: 是否使用mkldnn计算库，CPU情况下使用，默认为False。
+            mkl_thread_num: mkldnn计算线程数，默认为4。
+            use_trt: 是否使用TensorRT，默认为False。
+            use_glog: 是否启用glog日志, 默认为False。
+            memory_optimize: 是否启动内存优化，默认为True。
+            max_trt_batch_size: 在使用TensorRT时配置的最大batch size，默认为1。
+            trt_precision_mode：在使用TensorRT时采用的精度，可选值['float32', 'float16']。默认为'float32'。
         """
+
         self.model_dir = model_dir
         self._model = load_model(model_dir, with_net=False)
 
@@ -163,8 +166,7 @@ class Predictor(object):
                 exit=True)
         return preprocessed_samples
 
-    def postprocess(self, net_outputs, topk=1, ori_shape=None,
-                    transforms=None):
+    def postprocess(self, net_outputs, topk=1, ori_shape=None, transforms=None):
         if self._model.model_type == 'classifier':
             true_topk = min(self._model.num_classes, topk)
             preds = self._model._postprocess(net_outputs[0], true_topk)
@@ -254,7 +256,8 @@ class Predictor(object):
             transforms = self._model.test_transforms
         if isinstance(img_file, tuple) and len(img_file) != 2:
             raise ValueError(
-                f"A change detection model accepts exactly two input images, but there are {len(img_file)}.")
+                f"A change detection model accepts exactly two input images, but there are {len(img_file)}."
+            )
         if isinstance(img_file, (str, np.ndarray, tuple)):
             images = [img_file]
         else:
@@ -265,8 +268,7 @@ class Predictor(object):
         self.timer.reset()
 
         for _ in range(repeats):
-            results = self._run(
-                images=images, topk=topk, transforms=transforms)
+            results = self._run(images=images, topk=topk, transforms=transforms)
 
         self.timer.repeats = repeats
         self.timer.img_num = len(images)
