@@ -8,10 +8,10 @@
 '''
 @File Description:
 # 根据test影像文件夹生成test.json
-!python /home/aistudio/work/json_getTest.py \
-    --test_image_path=/home/aistudio/img_test \
-    --json_train_path=/home/aistudio/data/data102587/instances_val2017.json \
-    --json_test_path=/home/aistudio/data/data102587/instances_test.json
+!python ./json_getTest.py \
+    --test_image_path=./input/img_test \
+    --json_train_path=./output/instances_val2017.json \
+    --json_test_path=./output/instances_test.json
 '''
 import os, cv2
 import json

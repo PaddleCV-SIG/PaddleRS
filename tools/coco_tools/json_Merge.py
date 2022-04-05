@@ -8,10 +8,10 @@
 '''
 @File Description:
 # 合并json文件，可以通过merge_keys控制合并的字段, 默认合并'images', 'annotations'字段
-!python /home/aistudio/work/json_merge.py \
-    --json1_path=/home/aistudio/data/data102587/instances_train2017.json \
-    --json2_path=/home/aistudio/data/data102587/instances_val2017.json \
-    --save_path=/home/aistudio/data/data102587/instances_trainval2017.json
+!python ./json_merge.py \
+    --json1_path=./input/instances_train2017.json \
+    --json2_path=./input/instances_val2017.json \
+    --save_path=./output/instances_trainval2017.json
 '''
 
 import json

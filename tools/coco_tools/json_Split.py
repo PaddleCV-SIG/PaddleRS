@@ -8,10 +8,10 @@
 '''
 @File Description:
 # json数据集划分，可以通过val_split_rate、val_split_num控制划分比例或个数, keep_val_inTrain可以设定是否在train中保留val相关信息
-!python /home/aistudio/work/json_split.py \
-    --json_all_path=/home/aistudio/data/data102587/instances_val2017.json \
-    --json_train_path=/home/aistudio/data/data102587/instances_val2017_split1.json \
-    --json_val_path=/home/aistudio/data/data102587/instances_val2017_split2.json
+!python ./json_split.py \
+    --json_all_path=./input/instances_val2017.json \
+    --json_train_path=./output/instances_val2017_split1.json \
+    --json_val_path=./output/instances_val2017_split2.json
 '''
 
 import json

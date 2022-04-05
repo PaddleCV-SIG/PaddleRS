@@ -8,8 +8,8 @@
 '''
 @File Description:
 # 输出json文件基本信息
-!python /home/aistudio/work/json_infoShow.py \
-    --json_path=/home/aistudio/data/data102587/instances_val2017.json
+!python ./json_infoShow.py \
+    --json_path=./input/instances_val2017.json
 '''
 
 import json

@@ -64,14 +64,22 @@ def img_flip(im, method=0):
     Args:
         im(array): image array
         method(int or string): choose the flip method, it must be one of [
-                                0, 1, 2, 3, 4, 'h', 'v', 'hv', 'rt2lb', 'rt2lb', 'dia', 'adia'
-                                ]
+                                0, 1, 2, 3, 4, 'h', 'v', 'hv', 'rt2lb', 'lt2rb', 'dia', 'adia']
+        0 or 'h': flipped in horizontal direction, which is the most frequently used method
+        1 or 'v': flipped in vertical direction
+        2 or 'hv': flipped in both horizontal diction and vertical direction
+        3 or 'rt2lb' or 'dia': flipped around the diagonal,
+                                which also can be thought as changing the RightTop part with LeftBottom part,
+                                so it is called 'rt2lb' as well.
+        4 or 'lt2rb' or 'adia': flipped around the anti-diagonal
+                                    which also can be thought as changing the LeftTop part with RightBottom part,
+                                    so it is called 'lt2rb' as well.
 
     Returns:
         flipped image(array)
 
     Raises:
-        xxError:
+        ValueError: Shape of image should 2d, 3d or more.
 
     Examples:
         --assume an image is like this:
@@ -101,7 +109,7 @@ def img_flip(im, method=0):
         - \ *
         \ + +
 
-        img_v, flipped in both horizontal diction and vertical direction
+        img_vh, flipped in both horizontal diction and vertical direction
         / * -
         * / -
         + + /
@@ -117,6 +125,8 @@ def img_flip(im, method=0):
         | | /
 
     """
+    if not len(im.shape) >= 2:
+        raise ValueError("Shape of image should 2d, 3d or more")
     if method==0 or method=='h':
         return horizontal_flip(im)
     elif method==1 or method=='v':
@@ -131,38 +141,27 @@ def img_flip(im, method=0):
         return im
 
 def horizontal_flip(im):
-    if len(im.shape) == 3:
-        im = im[:, ::-1, :]
-    elif len(im.shape) == 2:
-        im = im[:, ::-1]
+    im = im[:, ::-1, ...]
     return im
 
 def vertical_flip(im):
-    if len(im.shape) == 3:
-        im = im[::-1, :, :]
-    elif len(im.shape) == 2:
-        im = im[::-1, :]
+    im = im[::-1, :, ...]
     return im
 
 def hv_flip(im):
-    if len(im.shape) == 3:
-        im = im[::-1, ::-1, :]
-    elif len(im.shape) == 2:
-        im = im[::-1, ::-1]
+    im = im[::-1, ::-1, ...]
     return im
 
 def rt2lb_flip(im):
-    if len(im.shape) == 3:
-        im = im.transpose(1, 0, 2)
-    elif len(im.shape) == 2:
-        im = im.transpose(1, 0)
+    axs_list = list(range(len(im.shape)))
+    axs_list[:2] = [1, 0]
+    im = im.transpose(axs_list)
     return im
 
 def lt2rb_flip(im):
-    if len(im.shape) == 3:
-        im = im[::-1, ::-1, :].transpose(1, 0, 2)
-    elif len(im.shape) == 2:
-        im = im[::-1, ::-1].transpose(1, 0)
+    axs_list = list(range(len(im.shape)))
+    axs_list[:2] = [1, 0]
+    im = im[::-1, ::-1, ...].transpose(axs_list)
     return im
 
 # endregion
@@ -178,12 +177,17 @@ def img_simple_rotate(im, method=0):
         method(int or string): choose the flip method, it must be one of [
                                 0, 1, 2, 90, 180, 270
                                 ]
+        0 or 90 : rotated in 90 degree, clockwise
+        1 or 180: rotated in 180 degree, clockwise
+        2 or 270: rotated in 270 degree, clockwise
 
     Returns:
         flipped image(array)
 
+
     Raises:
-        xxError:
+        ValueError: Shape of image should 2d, 3d or more.
+
 
     Examples:
         --assume an image is like this:
@@ -218,6 +222,8 @@ def img_simple_rotate(im, method=0):
 
 
     """
+    if not len(im.shape) >= 2:
+        raise ValueError("Shape of image should 2d, 3d or more")
     if method==0 or method==90:
         return rot_90(im)
     elif method==1 or method==180:
@@ -228,24 +234,19 @@ def img_simple_rotate(im, method=0):
         return im
 
 def rot_90(im):
-    if len(im.shape) == 3:
-        im = im[::-1, :, :].transpose(1, 0, 2)
-    elif len(im.shape) == 2:
-        im = im[::-1, :].transpose(1, 0)
+    axs_list = list(range(len(im.shape)))
+    axs_list[:2] = [1, 0]
+    im = im[::-1, :, ...].transpose(axs_list)
     return im
 
 def rot_180(im):
-    if len(im.shape) == 3:
-        im = im[::-1, ::-1, :]
-    elif len(im.shape) == 2:
-        im = im[::-1, ::-1]
+    im = im[::-1, ::-1, ...]
     return im
 
 def rot_270(im):
-    if len(im.shape) == 3:
-        im = im[:, ::-1, :].transpose(1, 0, 2)
-    elif len(im.shape) == 2:
-        im = im[:, ::-1].transpose(1, 0)
+    axs_list = list(range(len(im.shape)))
+    axs_list[:2] = [1, 0]
+    im = im[:, ::-1, ...].transpose(axs_list)
     return im
 # endregion
 

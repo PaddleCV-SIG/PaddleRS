@@ -524,16 +524,24 @@ class RandomFlipOrRotation(Transform):
 
     Args:
         probs (list of float): Probabilities of flipping and rotation. Default: [0.35,0.25].
-        probsf (list of float): Probabilities of 5 flipping mode. Default: [0.3, 0.3, 0.2, 0.1, 0.1].
-        probsr (list of float): Probabilities of 3 rotation mode. Default: [0.25,0.5,0.25].
+        probsf (list of float): Probabilities of 5 flipping mode
+                                (horizontal, vertical, both horizontal diction and vertical, diagonal, anti-diagonal).
+                                Default: [0.3, 0.3, 0.2, 0.1, 0.1].
+        probsr (list of float): Probabilities of 3 rotation mode(90°, 180°, 270° clockwise). Default: [0.25,0.5,0.25].
 
     Examples:
-        --we can use this operator in yml config like following ways:
 
-        - type: RandomFlipOrRotation
-          probs: [0.3, 0.2]
-          probsf:[0.3, 0.2, 0, 0, 0]
-          probsr:[0, 0.5, 0]
+        from paddlers import transforms as T
+
+        # 定义数据增强
+        train_transforms = T.Compose([
+            T.RandomFlipOrRotation(
+                probs  = [0.3, 0.2]             # 进行flip增强的概率是0.3，进行rotate增强的概率是0.2，不变的概率是0.5
+                probsf = [0.3, 0.25, 0, 0, 0]   # flip增强时，使用水平flip、垂直flip的概率分别是0.3、0.25，水平且垂直flip、对角线flip、反对角线flip概率均为0，不变的概率是0.45
+                probsr = [0, 0.65, 0]),         # rotate增强时，顺时针旋转90度的概率是0，顺时针旋转180度的概率是0.65，顺时针旋转90度的概率是0，不变的概率是0.35
+            T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        ])
+
     """
 
     def __init__(self, probs=[0.35, 0.25], probsf=[0.3, 0.3, 0.2, 0.1, 0.1], probsr=[0.25,0.5,0.25]):
