@@ -19,10 +19,9 @@ import paddle.nn as nn
 import paddle.nn.functional as F
 
 from .layers import Conv3x3, MaxPool2x2, ConvTransposed3x3, Identity
-from .param_init import normal_init, constant_init
 
 
-class UNetEarlyFusion(nn.Layer):
+class FCEarlyFusion(nn.Layer):
     """
     The FC-EF implementation based on PaddlePaddle.
 
@@ -38,7 +37,7 @@ class UNetEarlyFusion(nn.Layer):
     """
 
     def __init__(self, in_channels, num_classes, use_dropout=False):
-        super().__init__()
+        super(FCEarlyFusion, self).__init__()
 
         C1, C2, C3, C4, C5 = 16, 32, 64, 128, 256
 
