@@ -12,4 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from . import models
+from .bit import BIT
+from .cdnet import CDNet
+from .dsifn import DSIFN
+from .stanet import STANet
+from .snunet import SNUNet
+from .dsamnet import DSAMNet
+from .changestar import ChangeStar
+from .fc_ef import FCEarlyFusion
+from .fc_siamconc import FCSiamConc
+from .fc_siamdiff import FCSiamDiff
