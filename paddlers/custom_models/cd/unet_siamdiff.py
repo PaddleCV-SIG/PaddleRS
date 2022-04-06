@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Transferred from https://github.com/rcdaudt/fully_convolutional_change_detection/blob/master/siamunet_diff.py .
+
 import paddle
 import paddle.nn as nn
 import paddle.nn.functional as F
@@ -20,9 +22,9 @@ from .layers import Conv3x3, MaxPool2x2, ConvTransposed3x3, Identity
 from .param_init import normal_init, constant_init
 
 
-class UNetSiamConc(nn.Layer):
+class UNetSiamDiff(nn.Layer):
     """
-    The FC-Siam-conc implementation based on PaddlePaddle.
+    The FC-Siam-diff implementation based on PaddlePaddle.
 
     The original article refers to
         Caye Daudt, R., et al. "Fully convolutional siamese networks for change detection"
@@ -72,7 +74,7 @@ class UNetSiamConc(nn.Layer):
 
         self.upconv4 = ConvTransposed3x3(C4, C4, output_padding=1)
 
-        self.conv43d = Conv3x3(C5 + C4, C4, norm=True, act=True)
+        self.conv43d = Conv3x3(C5, C4, norm=True, act=True)
         self.do43d = self._make_dropout()
         self.conv42d = Conv3x3(C4, C4, norm=True, act=True)
         self.do42d = self._make_dropout()
@@ -81,7 +83,7 @@ class UNetSiamConc(nn.Layer):
 
         self.upconv3 = ConvTransposed3x3(C3, C3, output_padding=1)
 
-        self.conv33d = Conv3x3(C4 + C3, C3, norm=True, act=True)
+        self.conv33d = Conv3x3(C4, C3, norm=True, act=True)
         self.do33d = self._make_dropout()
         self.conv32d = Conv3x3(C3, C3, norm=True, act=True)
         self.do32d = self._make_dropout()
@@ -90,14 +92,14 @@ class UNetSiamConc(nn.Layer):
 
         self.upconv2 = ConvTransposed3x3(C2, C2, output_padding=1)
 
-        self.conv22d = Conv3x3(C3 + C2, C2, norm=True, act=True)
+        self.conv22d = Conv3x3(C3, C2, norm=True, act=True)
         self.do22d = self._make_dropout()
         self.conv21d = Conv3x3(C2, C1, norm=True, act=True)
         self.do21d = self._make_dropout()
 
         self.upconv1 = ConvTransposed3x3(C1, C1, output_padding=1)
 
-        self.conv12d = Conv3x3(C2 + C1, C1, norm=True, act=True)
+        self.conv12d = Conv3x3(C2, C1, norm=True, act=True)
         self.do12d = self._make_dropout()
         self.conv11d = Conv3x3(C1, num_classes)
 
@@ -156,7 +158,11 @@ class UNetSiamConc(nn.Layer):
         pad4 = (0, paddle.shape(x43_1)[3] - paddle.shape(x4d)[3], 0,
                 paddle.shape(x43_1)[2] - paddle.shape(x4d)[2])
         x4d = paddle.concat(
-            [F.pad(x4d, pad=pad4, mode='replicate'), x43_1, x43_2], 1)
+            [
+                F.pad(x4d, pad=pad4, mode='replicate'),
+                paddle.abs(x43_1 - x43_2)
+            ],
+            1)
         x43d = self.do43d(self.conv43d(x4d))
         x42d = self.do42d(self.conv42d(x43d))
         x41d = self.do41d(self.conv41d(x42d))
@@ -166,7 +172,11 @@ class UNetSiamConc(nn.Layer):
         pad3 = (0, paddle.shape(x33_1)[3] - paddle.shape(x3d)[3], 0,
                 paddle.shape(x33_1)[2] - paddle.shape(x3d)[2])
         x3d = paddle.concat(
-            [F.pad(x3d, pad=pad3, mode='replicate'), x33_1, x33_2], 1)
+            [
+                F.pad(x3d, pad=pad3, mode='replicate'),
+                paddle.abs(x33_1 - x33_2)
+            ],
+            1)
         x33d = self.do33d(self.conv33d(x3d))
         x32d = self.do32d(self.conv32d(x33d))
         x31d = self.do31d(self.conv31d(x32d))
@@ -176,7 +186,11 @@ class UNetSiamConc(nn.Layer):
         pad2 = (0, paddle.shape(x22_1)[3] - paddle.shape(x2d)[3], 0,
                 paddle.shape(x22_1)[2] - paddle.shape(x2d)[2])
         x2d = paddle.concat(
-            [F.pad(x2d, pad=pad2, mode='replicate'), x22_1, x22_2], 1)
+            [
+                F.pad(x2d, pad=pad2, mode='replicate'),
+                paddle.abs(x22_1 - x22_2)
+            ],
+            1)
         x22d = self.do22d(self.conv22d(x2d))
         x21d = self.do21d(self.conv21d(x22d))
 
@@ -185,7 +199,11 @@ class UNetSiamConc(nn.Layer):
         pad1 = (0, paddle.shape(x12_1)[3] - paddle.shape(x1d)[3], 0,
                 paddle.shape(x12_1)[2] - paddle.shape(x1d)[2])
         x1d = paddle.concat(
-            [F.pad(x1d, pad=pad1, mode='replicate'), x12_1, x12_2], 1)
+            [
+                F.pad(x1d, pad=pad1, mode='replicate'),
+                paddle.abs(x12_1 - x12_2)
+            ],
+            1)
         x12d = self.do12d(self.conv12d(x1d))
         x11d = self.conv11d(x12d)
 

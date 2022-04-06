@@ -33,12 +33,23 @@
 * [模型API/模型加载API](../../docs/apis/models/README.md)
 * [预测结果可视化API](../../docs/apis/visualize.md) -->
 
-# 环境准备
+## 环境准备
 
 - [PaddlePaddle安装](https://www.paddlepaddle.org.cn/install/quick)
 * 版本要求：PaddlePaddle>=2.1.0
 
-- [PaddleRS安装](../../docs/install.md)
+- PaddleRS安装
+
+
+PaddleRS代码会跟随开发进度不断更新，可以安装develop分支的代码使用最新的功能，安装方式如下：
+
+```
+git clone https://github.com/PaddleCV-SIG/PaddleRS
+cd PaddleRS
+git checkout develop
+pip install -r requirements.txt
+python setup.py install
+```
 
 ## 开始训练
 * 在安装PaddleRS后，使用如下命令进行单卡训练。代码会自动下载训练数据。以DeepLab V3+图像分割模型为例：
@@ -62,4 +73,4 @@ python -m paddle.distributed.launch --gpus 0,1 tutorials/train/semantic_segmenta
 visualdl --logdir output/deeplabv3p/vdl_log --port 8001
 ```
 
-服务启动后，使用浏览器打开 https://0.0.0.0:8001 或 https://localhost:8001 即可查看结果。
+服务启动后，使用浏览器打开 https://0.0.0.0:8001 或 https://localhost:8001
