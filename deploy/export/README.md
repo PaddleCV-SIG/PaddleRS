@@ -37,7 +37,7 @@
 python deploy/export/export_model.py --model_dir=./output/deeplabv3p/best_model/ --save_dir=./inference_model/
 ```
 
-其中，`--model_dir`选项和`--save_dir`选项分别指定存储训练格式模型和部署格式模型的目录。例如，在上面的例子中，`./inference_model/`目录下将生成一个名为`inference_model/`的子目录（即`inference_model/inference_model/`)，其中包含`model.pdmodel`、`model.pdiparams`、`model.pdiparams.info`、`model.yml`和`pipeline.yml`五个文件。
+其中，`--model_dir`选项和`--save_dir`选项分别指定存储训练格式模型和部署格式模型的目录。例如，在上面的例子中，`./inference_model/`目录下将生成`model.pdmodel`、`model.pdiparams`、`model.pdiparams.info`、`model.yml`和`pipeline.yml`五个文件。
 
 `deploy/export/export_model.py`脚本包含三个命令行选项：
 

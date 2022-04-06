@@ -589,7 +589,6 @@ class BaseModel:
         return infer_net
 
     def _export_inference_model(self, save_dir, image_shape=None):
-        save_dir = osp.join(save_dir, 'inference_model')
         self.test_inputs = self._get_test_inputs(image_shape)
         infer_net = self._build_inference_net()
 
