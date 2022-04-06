@@ -19,10 +19,9 @@ import paddle.nn as nn
 import paddle.nn.functional as F
 
 from .layers import Conv3x3, MaxPool2x2, ConvTransposed3x3, Identity
-from .param_init import normal_init, constant_init
 
 
-class UNetSiamConc(nn.Layer):
+class FCSiamConc(nn.Layer):
     """
     The FC-Siam-conc implementation based on PaddlePaddle.
 
@@ -38,7 +37,7 @@ class UNetSiamConc(nn.Layer):
     """
 
     def __init__(self, in_channels, num_classes, use_dropout=False):
-        super(UNetSiamConc, self).__init__()
+        super(FCSiamConc, self).__init__()
 
         C1, C2, C3, C4, C5 = 16, 32, 64, 128, 256
 
@@ -194,12 +193,7 @@ class UNetSiamConc(nn.Layer):
         return [x11d]
 
     def init_weight(self):
-        for sublayer in self.sublayers():
-            if isinstance(sublayer, nn.Conv2D):
-                normal_init(sublayer.weight, std=0.001)
-            elif isinstance(sublayer, (nn.BatchNorm, nn.SyncBatchNorm)):
-                constant_init(sublayer.weight, value=1.0)
-                constant_init(sublayer.bias, value=0.0)
+        pass
 
     def _make_dropout(self):
         if self.use_dropout:
