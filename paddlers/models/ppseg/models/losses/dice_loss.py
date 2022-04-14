@@ -29,7 +29,7 @@ class DiceLoss(nn.Layer):
             https://github.com/pytorch/pytorch/issues/1249#issuecomment-337999895
     """
 
-    def __init__(self, ignore_index=255, smooth=0.):
+    def __init__(self, ignore_index=255, smooth=1e-7):
         super(DiceLoss, self).__init__()
         self.ignore_index = ignore_index
         self.eps = 1e-5

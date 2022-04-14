@@ -407,8 +407,11 @@ class BaseModel:
                                     pass
                         logging.info('[EVAL] Finished, Epoch={}, {} .'.format(
                             i + 1, dict2str(self.eval_metrics)))
-                        best_accuracy_key = list(self.eval_metrics.keys())[0]
-                        current_accuracy = self.eval_metrics[best_accuracy_key]
+                        # best_accuracy_key = list(self.eval_metrics.keys())[0]
+                        # 改为F1的分数
+                        best_accuracy_key = 'category_F1-score'
+                        current_accuracy = self.eval_metrics[best_accuracy_key][
+                            1]
                         if current_accuracy > self.best_accuracy:
                             self.best_accuracy = current_accuracy
                             self.best_model_epoch = i + 1
