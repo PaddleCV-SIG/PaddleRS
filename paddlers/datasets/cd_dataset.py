@@ -15,6 +15,7 @@
 import copy
 from enum import IntEnum
 import os.path as osp
+import numpy as np
 
 from paddle.io import Dataset
 from paddlers.utils import logging, get_num_workers, get_encoding, path_normalization, is_pic
