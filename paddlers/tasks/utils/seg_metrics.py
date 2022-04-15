@@ -15,18 +15,13 @@
 import numpy as np
 import paddle
 
-import paddlers.models.ppseg as paddleseg
-
 
 def loss_computation(logits_list, labels, losses):
     loss_list = []
     for i in range(len(logits_list)):
         logits = logits_list[i]
         loss_i = losses['types'][i]
-        if isinstance(loss_i, paddleseg.models.MixedLoss):
-            loss_list.append(losses['coef'][i] * sum(loss_i(logits, labels)))
-        else:
-            loss_list.append(losses['coef'][i] * loss_i(logits, labels))
+        loss_list.append(losses['coef'][i] * loss_i(logits, labels))
 
     return loss_list
 
@@ -37,10 +32,7 @@ def multitask_loss_computation(logits_list, labels_list, losses):
         logits = logits_list[i]
         labels = labels_list[i]
         loss_i = losses['types'][i]
-        if isinstance(loss_i, paddleseg.models.MixedLoss):
-            loss_list.append(losses['coef'][i] * sum(loss_i(logits, labels)))
-        else:
-            loss_list.append(losses['coef'][i] * loss_i(logits, labels))
+        loss_list.append(losses['coef'][i] * loss_i(logits, labels))
 
     return loss_list
 
