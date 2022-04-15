@@ -21,7 +21,7 @@ def get_parser():
 if __name__ == "__main__":
     parser = get_parser()
     args = parser.parse_args()
-
+    E:\game\solo\breanman11\dataset\home\aistudio
     DATA_DIR = args.data_dir
     
     TRAIN_FILE_LIST_PATH = os.path.join(DATA_DIR,'train.txt')
@@ -40,8 +40,7 @@ if __name__ == "__main__":
     SAVE_INTERVAL_EPOCHS = args.save_epoch
     #训练阶段 batch size
     TRAIN_BATCH_SIZE = args.batch_size
-    
-    
+    state_dict_path= args.state_dict_path
    
     eval_transforms = T.Compose([
         T.Resize(target_size=256),
@@ -61,8 +60,9 @@ if __name__ == "__main__":
     # 初始化模型，并进行训练
     # 可使用VisualDL查看训练指标，参考https://github.com/PaddlePaddle/paddlers/blob/develop/docs/visualdl.md
     num_classes = len(eval_dataset.labels)
-    model = pdrs.tasks.STANet( in_channels=3, num_classes=num_classes, att_type='PAM', ds_factor=1)                              
-    state_dict_path='output/stanet/best_model/model.pdparams'
+    model = pdrs.tasks.STANet( in_channels=3, num_classes=num_classes, att_type='PAM', ds_factor=1)     
+                                   
+   
     model.net_initialize(pretrain_weights = state_dict_path)
     eval_metrics = model.evaluate(eval_dataset)
     print(str(eval_metrics))
