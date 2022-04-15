@@ -3,7 +3,6 @@
 # 变化检测模型STANet训练示例脚本
 # 执行此脚本前，请确认已正确安装PaddleRS库,并预处理数据集
 import sys
-sys.path.append('/home/aistudio/PaddleRS')
 import paddle
 import os
 import argparse
@@ -24,13 +23,13 @@ def get_parser():
     return parser
 
 # # 数据集存放目录
-# DATA_DIR = '../work/Real/subset'
+# DATA_DIR = './dataset'
 # # 训练集`file_list`文件路径
-# TRAIN_FILE_LIST_PATH = '../work/Real/subset/train.txt'
+# TRAIN_FILE_LIST_PATH = './dataset/train.txt'
 # # 验证集`file_list`文件路径
-# EVAL_FILE_LIST_PATH = '../work/Real/subset/test.txt'
+# EVAL_FILE_LIST_PATH = './dataset/test.txt'
 # # 实验目录，保存输出的模型权重和结果
-# EXP_DIR = './output/snunet/'
+# EXP_DIR = './output/stanet/'
 # # 初始学习率
 # LR = 0.001
 # # 学习率衰减步长（注意，单位为迭代次数而非epoch数），即每多少次迭代将学习率衰减一半
