@@ -2,9 +2,9 @@
 ## 1.论文简介
 STANET: [A Spatial-T emporal Attention-Based Method and a New Dataset for Remote Sensing Image Change Detection](https://www.mdpi.com/2072-4292/12/10/1662)，
 
-<img src=./docs/images/model.png></img>
+<img src=./docs/stanetmodel.png></img>
 
-上图是SNUNET-CD架构概述。作者提出了一种用于变化检测的稠密链接网络，即SNUNet-CD (siamese network和NestedUNet的组合)，受DenseNet和NestedUNet的启发，设计了一个密集的连接的连体网络用于变更检测。通过编码器和解码器之间、解码器和解码器之间的密集跳过连接，它可以保持高分辨率、细粒度的表示。提出了集成通道关注模块(ECAM)的深度监控方法。通过ECAM，可以细化不同语义层次的最具代表性的特征，并用于最终的分类。
+STANet管道。已经设计了两种类型的自我注意模块。(b)特征提取器。(c)基本时空注意模块(BAM)。(d)金字塔时空注意模块(PAM)
 
 **参考实现**：https://github.com/justchenhao/STANet
 
@@ -18,7 +18,7 @@ STANET: [A Spatial-T emporal Attention-Based Method and a New Dataset for Remote
 | STANET | AdamW  | 100 | 16 | LEVIR | **0.8753005** | 0.77825277 |
 
 
-每一个epoch的精度和loss可以用visualDL在`output\snunet\vdl_log\vdlrecords.1649682194.log`中查看。
+精度和loss可以用visualDL在`output\snunet\vdl_log\vdlrecords.1649682194.log`中查看。
 
 ## 3.环境依赖
 通过以下命令安装对应依赖
@@ -37,6 +37,16 @@ pip install -r requirements.txt
 
 ```shell
 python ./data/process_cdd_data.py --data_dir=../work/Real/subset
+
+# 切片
+python /home/aistudio/PaddleRS/tools/spliter-cd.py --image_folder data/LEVIR-CD --block_size 256 --save_folder dataset
+# 创建列表
+python /home/aistudio/PaddleRS/tools/create_list.py --image_folder ./dataset/train --A A --B B --label label --save_txt train.txt
+python /home/aistudio/PaddleRS/tools/create_list.py --image_folder ./dataset/val --A A --B B --label label --save_txt val.txt
+python /home/aistudio/PaddleRS/tools/create_list.py --image_folder ./dataset/test --A A --B B --label label --save_txt test.txt
+
+
+
 ```
 
 
