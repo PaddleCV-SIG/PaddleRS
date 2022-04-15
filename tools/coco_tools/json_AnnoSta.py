@@ -19,7 +19,7 @@
     --png_objNum_path=./anno_sta/instances_val2017_annotations_objNum.png \
     --get_relative=True
 '''
-
+import os
 import json
 import argparse
 import numpy as np
@@ -31,19 +31,28 @@ import matplotlib.pyplot as plt
 shp_rate_bins = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2, 2.1,
                  2.2, 2.4, 2.6, 3, 3.5, 4, 5]
 
+def check_dir(check_path,show=True):
+    if os.path.isdir(check_path):
+        check_directory = check_path
+    else:
+        check_directory = os.path.dirname(check_path)
+    if not os.path.exists(check_directory):
+        os.makedirs(check_directory)
+        if show:
+            print('make dir:',check_directory)
 
 def js_anno_sta(js_path, csv_path, png_shape_path, png_shapeRate_path, png_pos_path, png_posEnd_path, png_cat_path,
-                png_objNum_path, get_relative):
+                png_objNum_path, get_relative, image_keyname, anno_keyname):
     print('json read...\n')
     with open(js_path, 'r') as load_f:
         data = json.load(load_f)
 
-    df_img = pd.DataFrame(data['images'])
+    df_img = pd.DataFrame(data[image_keyname])
     sns.jointplot('height', 'width', data=df_img, kind='hex')
     plt.close()
     df_img = df_img.rename(columns={"id": "image_id", "height": "image_height", "width": "image_width"})
 
-    df_anno = pd.DataFrame(data['annotations'])
+    df_anno = pd.DataFrame(data[anno_keyname])
     df_anno[['pox_x', 'pox_y', 'width', 'height']] = pd.DataFrame(df_anno['bbox'].values.tolist())
     df_anno['width'] = df_anno['width'].astype(int)
     df_anno['height'] = df_anno['height'].astype(int)
@@ -51,6 +60,7 @@ def js_anno_sta(js_path, csv_path, png_shape_path, png_shapeRate_path, png_pos_p
     df_merge = pd.merge(df_img, df_anno, on="image_id")
 
     if png_shape_path is not None:
+        check_dir(png_shape_path)
         sns.jointplot('height', 'width', data=df_merge, kind='hex')
         plt.savefig(png_shape_path)
         plt.close()
@@ -64,6 +74,7 @@ def js_anno_sta(js_path, csv_path, png_shape_path, png_shapeRate_path, png_pos_p
             plt.close()
             print('png save to', png_shapeR_path)
     if png_shapeRate_path is not None:
+        check_dir(png_shapeRate_path)
         plt.figure(figsize=(12, 8))
         df_merge['shape_rate'] = (df_merge['width'] / df_merge['height']).round(1)
         df_merge['shape_rate'].value_counts(sort=False, bins=shp_rate_bins).plot(kind='bar', title='images shape rate')
@@ -73,6 +84,7 @@ def js_anno_sta(js_path, csv_path, png_shape_path, png_shapeRate_path, png_pos_p
         print('png save to', png_shapeRate_path)
 
     if png_pos_path is not None:
+        check_dir(png_pos_path)
         sns.jointplot('pox_y', 'pox_x', data=df_merge, kind='hex')
         plt.savefig(png_pos_path)
         plt.close()
@@ -86,6 +98,7 @@ def js_anno_sta(js_path, csv_path, png_shape_path, png_shapeRate_path, png_pos_p
             plt.close()
             print('png save to', png_posR_path)
     if png_posEnd_path is not None:
+        check_dir(png_posEnd_path)
         df_merge['pox_y_end'] = df_merge['pox_y'] + df_merge['height']
         df_merge['pox_x_end'] = df_merge['pox_x'] + df_merge['width']
         sns.jointplot('pox_y_end', 'pox_x_end', data=df_merge, kind='hex')
@@ -102,6 +115,7 @@ def js_anno_sta(js_path, csv_path, png_shape_path, png_shapeRate_path, png_pos_p
             print('png save to', png_posEndR_path)
 
     if png_cat_path is not None:
+        check_dir(png_cat_path)
         plt.figure(figsize=(12, 8))
         df_merge['category_id'].value_counts().sort_index().plot(kind='bar', title='obj category')
         plt.savefig(png_cat_path)
@@ -109,6 +123,7 @@ def js_anno_sta(js_path, csv_path, png_shape_path, png_shapeRate_path, png_pos_p
         print('png save to', png_cat_path)
 
     if png_objNum_path is not None:
+        check_dir(png_objNum_path)
         plt.figure(figsize=(12, 8))
         df_merge['image_id'].value_counts().value_counts().sort_index().plot(kind='bar', title='obj number per image')
         # df_merge['image_id'].value_counts().value_counts(bins=np.linspace(1,31,16)).sort_index().plot(kind='bar', title='obj number per image')
@@ -118,6 +133,7 @@ def js_anno_sta(js_path, csv_path, png_shape_path, png_shapeRate_path, png_pos_p
         print('png save to', png_objNum_path)
 
     if csv_path is not None:
+        check_dir(csv_path)
         df_merge.to_csv(csv_path)
         print('csv save to', csv_path)
 
@@ -148,7 +164,10 @@ def get_args():
 
     parser.add_argument('--get_relative', type=bool, default=True,
                         help='if True, get relative result')
-
+    parser.add_argument('--image_keyname', type=str, default='images',
+                        help='image key name in json, default images')
+    parser.add_argument('--anno_keyname', type=str, default='annotations',
+                        help='annotation key name in json, default annotations')
     parser.add_argument('-Args_show', '--Args_show', type=bool, default=True,
                         help='Args_show(default: True), if True, show args info')
 
@@ -165,6 +184,7 @@ def get_args():
 if __name__ == '__main__':
     args = get_args()
     js_anno_sta(args.json_path, args.csv_path, args.png_shape_path, args.png_shapeRate_path,
-                args.png_pos_path, args.png_posEnd_path, args.png_cat_path, args.png_objNum_path, args.get_relative)
+                args.png_pos_path, args.png_posEnd_path, args.png_cat_path, args.png_objNum_path,
+                args.get_relative, args.image_keyname, args.anno_keyname)
 
 

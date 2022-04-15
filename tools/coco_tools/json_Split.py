@@ -25,7 +25,8 @@ def get_annno(df_img_split, df_anno):
     return df_anno_split
 
 
-def js_split(js_all_path, js_train_path, js_val_path, val_split_rate=0.1, val_split_num=None, keep_val_inTrain=False):
+def js_split(js_all_path, js_train_path, js_val_path, val_split_rate, val_split_num, keep_val_inTrain,
+             image_keyname, anno_keyname):
     print('Split'.center(100,'-'))
     print()
 
@@ -33,8 +34,8 @@ def js_split(js_all_path, js_train_path, js_val_path, val_split_rate=0.1, val_sp
 
     with open(js_all_path, 'r') as load_f:
         data = json.load(load_f)
-    df_anno = pd.DataFrame(data['annotations'])
-    df_img = pd.DataFrame(data['images'])
+    df_anno = pd.DataFrame(data[anno_keyname])
+    df_img = pd.DataFrame(data[image_keyname])
     df_img = df_img.rename(columns={"id": "image_id"})
     df_img = df_img.sample(frac=1, random_state=0)
 
@@ -54,14 +55,14 @@ def js_split(js_all_path, js_train_path, js_val_path, val_split_rate=0.1, val_sp
     df_img_train = df_img_train.rename(columns={"image_id": "id"}).sort_values(by='id')
     df_img_val =df_img_val.rename(columns={"image_id": "id"}).sort_values(by='id')
 
-    data['images'] = json.loads(df_img_train.to_json(orient='records'))
-    data['annotations'] = json.loads(df_anno_train.to_json(orient='records'))
+    data[image_keyname] = json.loads(df_img_train.to_json(orient='records'))
+    data[anno_keyname] = json.loads(df_anno_train.to_json(orient='records'))
     str_json = json.dumps(data, ensure_ascii=False)
     with open(js_train_path, 'w', encoding='utf-8') as file_obj:
         file_obj.write(str_json)
 
-    data['images'] = json.loads(df_img_val.to_json(orient='records'))
-    data['annotations'] = json.loads(df_anno_val.to_json(orient='records'))
+    data[image_keyname] = json.loads(df_img_val.to_json(orient='records'))
+    data[anno_keyname] = json.loads(df_anno_val.to_json(orient='records'))
     str_json = json.dumps(data, ensure_ascii=False)
     with open(js_val_path, 'w', encoding='utf-8') as file_obj:
         file_obj.write(str_json)
@@ -86,6 +87,10 @@ def get_args():
                         help='val image number in total image, default is None; if val_split_num is set, val_split_rate will not work')
     parser.add_argument('--keep_val_inTrain', type=bool, default=False,
                         help='if true, val part will be in train as well; which means that the content of json_train_path is the same as the content of json_all_path')
+    parser.add_argument('--image_keyname', type=str, default='images',
+                        help='image key name in json, default images')
+    parser.add_argument('--anno_keyname', type=str, default='annotations',
+                        help='annotation key name in json, default annotations')
     parser.add_argument('-Args_show', '--Args_show', type=bool, default=True,
                         help='Args_show(default: True), if True, show args info')
 
@@ -100,6 +105,7 @@ def get_args():
 
 if __name__ == '__main__':
     args = get_args()
-    js_split(args.json_all_path,args.json_train_path,args.json_val_path, args.val_split_rate,  args.val_split_num, args.keep_val_inTrain)
+    js_split(args.json_all_path,args.json_train_path,args.json_val_path, args.val_split_rate,  args.val_split_num,
+             args.keep_val_inTrain, args.image_keyname, args.anno_keyname)
 
 

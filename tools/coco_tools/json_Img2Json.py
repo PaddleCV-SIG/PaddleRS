@@ -19,7 +19,7 @@ import argparse
 from tqdm import tqdm
 
 
-def js_test(test_image_path, js_train_path, js_test_path):
+def js_test(test_image_path, js_train_path, js_test_path, image_keyname, cat_keyname):
     print('Get Test'.center(100, '-'))
     print()
 
@@ -45,8 +45,8 @@ def js_test(test_image_path, js_train_path, js_test_path):
             tmp['file_name'] = img_name
             images.append(tmp)
     print('\n total test image:', len(file_list))
-    data['images'] = images
-    data['categories'] = data_train['categories']
+    data[image_keyname] = images
+    data[cat_keyname] = data_train[cat_keyname]
     with open(js_test_path, 'w') as f:
         json.dump(data, f)
 
@@ -61,6 +61,10 @@ def get_args():
                         help='train json path, provide categories information')
     parser.add_argument('--json_test_path', type=str,
                         help='test json path to save')
+    parser.add_argument('--image_keyname', type=str, default='images',
+                        help='image key name in json, default images')
+    parser.add_argument('--cat_keyname', type=str, default='categories',
+                        help='categories key name in json, default categories')
     parser.add_argument('-Args_show', '--Args_show', type=bool, default=True,
                         help='Args_show(default: True), if True, show args info')
 
@@ -76,7 +80,7 @@ def get_args():
 
 if __name__ == '__main__':
     args = get_args()
-    js_test(args.test_image_path, args.json_train_path, args.json_test_path)
+    js_test(args.test_image_path, args.json_train_path, args.json_test_path, args.image_keyname, args.cat_keyname)
 
 
 
