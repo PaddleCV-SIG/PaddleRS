@@ -41,7 +41,7 @@ __all__ = [
     "RandomScaleAspect", "RandomExpand", "Padding", "MixupImage",
     "RandomDistort", "RandomBlur", "RandomSwap", "Defogging", "DimReducing",
     "BandSelecting", "ArrangeSegmenter", "ArrangeChangeDetector",
-    "ArrangeClassifier", "ArrangeDetector"
+    "ArrangeClassifier", "ArrangeDetector", "Maintain"
 ]
 
 interp_dict = {
@@ -1664,4 +1664,24 @@ class ArrangeDetector(Transform):
     def apply(self, sample):
         if self.mode == 'eval' and 'gt_poly' in sample:
             del sample['gt_poly']
+        return sample
+
+
+class Maintain(Transform):
+    """
+     maintain the size ofimgae, just change the format of image.
+    """
+
+    def __init__(self):
+        super(Maintain, self).__init__()
+
+    def apply_im(self, image):
+        image = image.astype(np.float32)
+        return image
+
+    def apply(self, sample):
+        sample['image'] = self.apply_im(sample['image'])
+        if 'image2' in sample:
+            sample['image2'] = self.apply_im(sample['image2'])
+
         return sample

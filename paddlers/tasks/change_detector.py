@@ -806,6 +806,19 @@ class SNUNet(BaseChangeDetector):
             use_mixed_loss=use_mixed_loss,
             **params)
 
+    def default_loss(self):
+        if self.use_mixed_loss is False:
+            print('use hybrid_loss!')
+            return {
+                'types': [
+                    paddleseg.models.FocalLoss(gamma=0),
+                    paddleseg.models.DiceLoss()
+                ],
+                'coef': [1.0, 1.0]
+            }
+        else:
+            return super().default_loss()
+
 
 class DSIFN(BaseChangeDetector):
     def __init__(self,
@@ -828,7 +841,9 @@ class DSIFN(BaseChangeDetector):
                 'coef': [1.0] * 5
             }
         else:
-            raise ValueError(f"Currently `use_mixed_loss` must be set to False for {self.__class__}")
+            raise ValueError(
+                f"Currently `use_mixed_loss` must be set to False for {self.__class__}"
+            )
 
 
 class DSAMNet(BaseChangeDetector):
@@ -860,7 +875,9 @@ class DSAMNet(BaseChangeDetector):
                 'coef': [1.0, 0.05, 0.05]
             }
         else:
-            raise ValueError(f"Currently `use_mixed_loss` must be set to False for {self.__class__}")
+            raise ValueError(
+                f"Currently `use_mixed_loss` must be set to False for {self.__class__}"
+            )
 
 
 class ChangeStar(BaseChangeDetector):
@@ -892,4 +909,6 @@ class ChangeStar(BaseChangeDetector):
                 'coef': [1.0] * 4
             }
         else:
-            raise ValueError(f"Currently `use_mixed_loss` must be set to False for {self.__class__}")
+            raise ValueError(
+                f"Currently `use_mixed_loss` must be set to False for {self.__class__}"
+            )
