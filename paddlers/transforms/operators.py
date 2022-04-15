@@ -41,7 +41,7 @@ __all__ = [
     "RandomScaleAspect", "RandomExpand", "Padding", "MixupImage",
     "RandomDistort", "RandomBlur", "RandomSwap", "Defogging", "DimReducing",
     "BandSelecting", "ArrangeSegmenter", "ArrangeChangeDetector",
-    "ArrangeClassifier", "ArrangeDetector"
+    "ArrangeClassifier", "ArrangeDetector", "Maintain"
 ]
 
 interp_dict = {
@@ -242,7 +242,8 @@ class Compose(Transform):
                 aux_masks = copy.deepcopy(sample['aux_masks'])
 
         sample = self.decode_image(sample)
-
+        # if len(self.transforms) < 1:
+        #     return sample
         for op in self.transforms:
             # skip batch transforms amd mixup
             if isinstance(op, (paddlers.transforms.BatchRandomResize,
@@ -632,6 +633,36 @@ class RandomVerticalFlip(Transform):
             if 'gt_poly' in sample and len(sample['gt_poly']) > 0:
                 sample['gt_poly'] = self.apply_segm(sample['gt_poly'], im_h,
                                                     im_w)
+        return sample
+
+
+class Maintain(Transform):
+    """
+    Apply min-max normalization to the image(s) in input.
+    1. im = (im - min_value) * 1 / (max_value - min_value)
+    2. im = im - mean
+    3. im = im / std
+
+    Args:
+        mean(List[float] or Tuple[float], optional): Mean of input image(s). Defaults to [0.485, 0.456, 0.406].
+        std(List[float] or Tuple[float], optional): Standard deviation of input image(s). Defaults to [0.229, 0.224, 0.225].
+        min_val(List[float] or Tuple[float], optional): Minimum value of input image(s). Defaults to [0, 0, 0, ].
+        max_val(List[float] or Tuple[float], optional): Max value of input image(s). Defaults to [255., 255., 255.].
+        is_scale(bool, optional): If True, the image pixel values will be divided by 255.
+    """
+
+    def __init__(self):
+        super(Maintain, self).__init__()
+
+    def apply_im(self, image):
+        image = image.astype(np.float32)
+        return image
+
+    def apply(self, sample):
+        sample['image'] = self.apply_im(sample['image'])
+        if 'image2' in sample:
+            sample['image2'] = self.apply_im(sample['image2'])
+
         return sample
 
 

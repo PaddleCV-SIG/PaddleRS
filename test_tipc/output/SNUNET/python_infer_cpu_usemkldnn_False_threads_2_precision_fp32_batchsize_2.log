@@ -1,0 +1,7 @@
+[04-12 14:10:16 MainThread @logger.py:242] Argv: tutorials/infer/snunet_infer.py --infer_dir=./test_tipc/result/inference_model/ --img_dir=./test_tipc/data/mini_cdd_dataset --use_gpu=False --enable_mkldnn=False --cpu_threads=2 --model_file=./test_tipc/output/model.pdmodel --batch_size=2 --input_file=test_tipc/data/BSD300/test --enable_benchmark=True --precision=fp32 --params_file=./test_tipc/result/inference_model/model.pdiparams
+[04-12 14:10:16 MainThread @utils.py:79] WRN paddlepaddle version: 2.2.2. The dynamic graph version of PARL is under development, not fully tested and supported
+2022-04-12 14:10:16 [INFO]	Model[SNUNet] loaded.
+------------------ Inference Time Info ----------------------
+total_time(ms): 31405.2, img_num: 20, batch_size: 20
+average latency time(ms): 31405.20, QPS: 0.031842
+preprocess_time_per_im(ms): 4.80, inference_time_per_batch(ms): 31309.20, postprocess_time_per_im(ms): 0.00
