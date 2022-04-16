@@ -1,0 +1,68 @@
+[04-16 22:35:59 MainThread @logger.py:242] Argv: tutorials/infer/change_detection/bit_infer.py --infer_dir=./test_tipc/result/inference_model/ --img_dir=./test_tipc/data/mini_dataset --output_dir=./test_tipc/result/predict_output --use_gpu=True --precision=fp32 --enable_benchmark=True --use_tensorrt=False
+[04-16 22:35:59 MainThread @utils.py:79] WRN paddlepaddle version: 2.2.2. The dynamic graph version of PARL is under development, not fully tested and supported
+2022-04-16 22:36:00 [INFO]	Model[BIT] loaded.
+total file number is 16
+------------------ Inference Time Info ----------------------
+total_time(ms): 2681.4, img_num: 1, batch_size: 1
+average latency time(ms): 2681.40, QPS: 0.372940
+preprocess_time_per_im(ms): 9.90, inference_time_per_batch(ms): 2670.80, postprocess_time_per_im(ms): 0.70
+------------------ Inference Time Info ----------------------
+total_time(ms): 22.5, img_num: 1, batch_size: 1
+average latency time(ms): 22.50, QPS: 44.444444
+preprocess_time_per_im(ms): 10.40, inference_time_per_batch(ms): 11.90, postprocess_time_per_im(ms): 0.20
+------------------ Inference Time Info ----------------------
+total_time(ms): 20.299999999999997, img_num: 1, batch_size: 1
+average latency time(ms): 20.30, QPS: 49.261084
+preprocess_time_per_im(ms): 8.80, inference_time_per_batch(ms): 11.30, postprocess_time_per_im(ms): 0.20
+------------------ Inference Time Info ----------------------
+total_time(ms): 20.0, img_num: 1, batch_size: 1
+average latency time(ms): 20.00, QPS: 50.000000
+preprocess_time_per_im(ms): 8.60, inference_time_per_batch(ms): 11.10, postprocess_time_per_im(ms): 0.30
+------------------ Inference Time Info ----------------------
+total_time(ms): 21.0, img_num: 1, batch_size: 1
+average latency time(ms): 21.00, QPS: 47.619048
+preprocess_time_per_im(ms): 9.20, inference_time_per_batch(ms): 11.60, postprocess_time_per_im(ms): 0.20
+------------------ Inference Time Info ----------------------
+total_time(ms): 19.400000000000002, img_num: 1, batch_size: 1
+average latency time(ms): 19.40, QPS: 51.546392
+preprocess_time_per_im(ms): 8.20, inference_time_per_batch(ms): 11.00, postprocess_time_per_im(ms): 0.20
+------------------ Inference Time Info ----------------------
+total_time(ms): 18.8, img_num: 1, batch_size: 1
+average latency time(ms): 18.80, QPS: 53.191489
+preprocess_time_per_im(ms): 8.20, inference_time_per_batch(ms): 10.40, postprocess_time_per_im(ms): 0.20
+------------------ Inference Time Info ----------------------
+total_time(ms): 20.2, img_num: 1, batch_size: 1
+average latency time(ms): 20.20, QPS: 49.504950
+preprocess_time_per_im(ms): 9.20, inference_time_per_batch(ms): 10.80, postprocess_time_per_im(ms): 0.20
+------------------ Inference Time Info ----------------------
+total_time(ms): 20.1, img_num: 1, batch_size: 1
+average latency time(ms): 20.10, QPS: 49.751244
+preprocess_time_per_im(ms): 8.60, inference_time_per_batch(ms): 11.30, postprocess_time_per_im(ms): 0.20
+------------------ Inference Time Info ----------------------
+total_time(ms): 19.8, img_num: 1, batch_size: 1
+average latency time(ms): 19.80, QPS: 50.505051
+preprocess_time_per_im(ms): 8.70, inference_time_per_batch(ms): 10.90, postprocess_time_per_im(ms): 0.20
+------------------ Inference Time Info ----------------------
+total_time(ms): 19.7, img_num: 1, batch_size: 1
+average latency time(ms): 19.70, QPS: 50.761421
+preprocess_time_per_im(ms): 8.80, inference_time_per_batch(ms): 10.70, postprocess_time_per_im(ms): 0.20
+------------------ Inference Time Info ----------------------
+total_time(ms): 18.8, img_num: 1, batch_size: 1
+average latency time(ms): 18.80, QPS: 53.191489
+preprocess_time_per_im(ms): 8.20, inference_time_per_batch(ms): 10.40, postprocess_time_per_im(ms): 0.20
+------------------ Inference Time Info ----------------------
+total_time(ms): 19.8, img_num: 1, batch_size: 1
+average latency time(ms): 19.80, QPS: 50.505051
+preprocess_time_per_im(ms): 9.00, inference_time_per_batch(ms): 10.60, postprocess_time_per_im(ms): 0.20
+------------------ Inference Time Info ----------------------
+total_time(ms): 19.599999999999998, img_num: 1, batch_size: 1
+average latency time(ms): 19.60, QPS: 51.020408
+preprocess_time_per_im(ms): 9.00, inference_time_per_batch(ms): 10.40, postprocess_time_per_im(ms): 0.20
+------------------ Inference Time Info ----------------------
+total_time(ms): 19.8, img_num: 1, batch_size: 1
+average latency time(ms): 19.80, QPS: 50.505051
+preprocess_time_per_im(ms): 8.90, inference_time_per_batch(ms): 10.70, postprocess_time_per_im(ms): 0.20
+------------------ Inference Time Info ----------------------
+total_time(ms): 19.0, img_num: 1, batch_size: 1
+average latency time(ms): 19.00, QPS: 52.631579
+preprocess_time_per_im(ms): 8.50, inference_time_per_batch(ms): 10.30, postprocess_time_per_im(ms): 0.20

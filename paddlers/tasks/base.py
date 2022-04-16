@@ -61,6 +61,7 @@ class BaseModel:
         self.quantizer = None
         self.quant_config = None
         self.fixed_input_shape = None
+        self.model_name = None
 
     def net_initialize(self,
                        pretrain_weights=None,
@@ -340,7 +341,8 @@ class BaseModel:
                 lr = self.optimizer.get_lr()
                 if isinstance(self.optimizer._learning_rate,
                               paddle.optimizer.lr.LRScheduler):
-                    self.optimizer._learning_rate.step()
+                    if self.model_name != "BIT":
+                        self.optimizer._learning_rate.step()
 
                 train_avg_metrics.update(outputs)
                 outputs['lr'] = lr
@@ -377,6 +379,10 @@ class BaseModel:
                                 train_step_each_epoch,
                                 dict2str(outputs),
                                 round(avg_step_time, 2), seconds_to_hms(eta)))
+
+            if isinstance(self.optimizer._learning_rate,
+                          paddle.optimizer.lr.LRScheduler):
+                self.optimizer._learning_rate.step()
 
             logging.info('[TRAIN] Epoch {} finished, {} .'
                          .format(i + 1, train_avg_metrics.log()))
