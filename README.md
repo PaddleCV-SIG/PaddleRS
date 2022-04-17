@@ -148,6 +148,16 @@ OrderedDict([('miou', 0.9511789327930941), ('category_iou', array([0.98762963, 0
 - out_dir：预测结果输出路径
 
 
+A时相图像
+<img src=./docs/Atrain_1_3_1.png></img>
+B时相图像
+<img src=./docs/Btrain_1_3_1.png></img>
+标签图像
+<img src=./docs/Ltrain_1_3_1.png></img>
+预测图像
+<img src=./docs/result.png></img>
+
+
 
 ### TIPC基础链条测试
 
