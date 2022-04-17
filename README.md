@@ -16,7 +16,7 @@ STANet设计了两种类型的自我注意模块。基本时空注意模块(BAM)
 
 | Network | opt | epoch | batch_size | dataset | categoryF1-Score | category_iou |
 | --- | --- | --- | --- | --- | --- | --- |
-| STANET | AdamW  | 100 | 16 | LEVIR | **0.8753005** | 0.77825277 |
+| STANET | AdamW  | 100 | 8 | LEVIR | **0.8753005** | 0.77825277 |
 
 
 精度和loss可以用visualDL在`output\snunet\vdl_log\vdlrecords.1649682194.log`中查看。
