@@ -5,15 +5,15 @@ gpu_list:0
 Global.use_gpu:True|True
 Global.auto_cast:fp32
 Global.epoch_num:lite_train_lite_infer=1|whole_train_whole_infer=500
-Global.save_model_dir:./test_tipc/result/stanet/
+Global.save_model_dir:./STANET_Paddle/test_tipc/result/stanet/
 Train.loader.batch_size_per_card:lite_train_lite_infer=2|whole_train_whole_infer=4
 Global.pretrained_model:null
 train_model_name:latest
-train_infer_img_dir:./test_tipc/data/mini_levir_dataset
+train_infer_img_dir:./STANET_Paddle/test_tipc/data/mini_levir_dataset
 null:null
 ##
 trainer:norm_train
-norm_train:tutorials/eval/stanet_train.py --data_dir=./test_tipc/data/mini_levir_dataset --out_dir=./test_tipc/result/stanet/ --num_epoch=6 --save_epoch=2
+norm_train:./STANET_Paddle/tutorials/train/stanet_train.py --data_dir=./STANET_Paddle/test_tipc/data/mini_levir_dataset --out_dir=./STANET_Paddle/test_tipc/result/stanet/ --num_epoch=6 --save_epoch=2  --batch_size=2
 pact_train:null
 fpgm_train:null
 distill_train:null
@@ -25,27 +25,25 @@ eval:null
 null:null
 ##
 ===========================infer_params===========================
-Global.save_inference_dir:./test_tipc/result/inference_model/
+Global.save_inference_dir:./STANET_Paddle/test_tipc/result/inference_model/
 Global.pretrained_model:
-norm_export:deploy/export/export_model.py --model_dir=./test_tipc/result/stanet/best_model/ --save_dir=./test_tipc/result/inference_model/
+norm_export:./STANET_Paddle/deploy/export/stanet_export.py --state_dict_path=./STANET_Paddle/test_tipc/result/stanet/best_model/model.pdparams --save_dir=./STANET_Paddle/test_tipc/result/inference_model/  --fixed_input_shape=[1,3,256,256]
 quant_export:null
 fpgm_export:null
 distill_export:null
 export1:null
 export2:null
-inference_dir:./test_tipc/result/inference_model/
+inference_dir:./STANET_Paddle/test_tipc/result/inference_model/
 infer_model:null
 infer_export:null
 infer_quant:False
-inference:tutorials/infer/stanet_infer.py --infer_dir=./test_tipc/result/inference_model/ --img_dir=./test_tipc/data/mini_levir_dataset 
---use_gpu:True|False
---enable_mkldnn:False
---cpu_threads:1|2
---batch_size:1|2
---use_tensorrt:False
---precision:fp32
---model_file:./test_tipc/output/model.pdmodel
---input_file:test_tipc/data/BSD300/test
+norm_inference:./STANET_Paddle/tutorials/infer/stanet_infer.py 
+--model_file ./inference_model/model.pdmodel 
+--params_file ./inference_model/model.pdiparams   
+--infer_dir=./inference_model  --img_dir=./dataset/  
+--img1=./STANET_Paddle/test_tipc/data/train/A/train_1_3_1.png 
+--img2=./STANET_Paddle/test_tipc/data/train/B/train_1_3_1.png 
+--out_dir=./STANET_Paddle/test_tipc/result/
 null:null
 --enable_benchmark:True
---params_file:./test_tipc/result/inference_model/model.pdiparams
+--params_file:./STANET_Paddle/test_tipc/result/inference_model/model.pdiparams
