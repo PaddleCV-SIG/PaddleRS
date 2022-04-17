@@ -1,4 +1,4 @@
-# 基于Paddle复现，并入PaddleRS套件
+# 基于Paddle复现
 ## 1.论文简介
 STANET: [A Spatial-T emporal Attention-Based Method and a New Dataset for Remote Sensing Image Change Detection](https://www.mdpi.com/2072-4292/12/10/1662)，
 
