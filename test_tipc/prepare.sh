@@ -1,5 +1,6 @@
 #!/bin/bash
-source test_tipc/common_func.sh
+
+source ./STANET_Paddle/test_tipc/common_func.sh
 
 FILENAME=$1
 # MODE be one of ['lite_train_lite_infer']
@@ -19,5 +20,5 @@ trainer_list=$(func_parser_value "${lines[14]}")
 # MODE be one of ['lite_train_lite_infer']
 if [ ${MODE} = "lite_train_lite_infer" ];then
     rm -rf ./test_tipc/data/mini_levir_dataset
-    cd ./test_tipc/data/ && unzip mini_levir_dataset.zip && cd ../../
+    cd ./STANET_Paddle/test_tipc/data/ && unzip mini_levir_dataset.zip && cd ../../
 fi
