@@ -58,7 +58,7 @@ python /home/aistudio/PaddleRS/tools/create_list.py --image_folder ./dataset/tes
 运行一下命令进行模型训练，在训练过程中会对模型进行评估，启用了VisualDL日志功能，运行之后在`/output/snunet/vdl_log` 文件夹下找到对应的日志文件
 
 ```shell
-!python ./STANET_Paddle/tutorials/train/stanet_train.py --data_dir=./dataset/   --out_dir=./output/stanet/   --batch_size=4 
+!python ./STANET_Paddle/tutorials/train/stanet_train.py --data_dir=./dataset/   --out_dir=./output/stanet/   --batch_size=8 
 ```
 
 **参数介绍**：
