@@ -13,16 +13,17 @@
 # limitations under the License.
 
 import os
+import os.path as osp
 import argparse
 from ast import literal_eval
-
-from paddlers.tasks import load_model
-
-
+import sys
+#加入环境
+sys.path.append('./STANET_Paddle/')
+import paddlers  as pdrs
 def get_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model_dir', '-m', type=str, default=None, help='model directory path')
     parser.add_argument('--save_dir', '-s', type=str, default=None, help='path to save inference model')
+    parser.add_argument('--state_dict_path', type=str, default=None, help='path to save inference model')
     parser.add_argument('--fixed_input_shape', '-fs', type=str, default=None,
         help="export inference model with fixed input shape: [w,h] or [n,c,w,h]")
     return parser
@@ -51,8 +52,11 @@ if __name__ == '__main__':
     os.environ['PADDLEX_EXPORT_STAGE'] = 'True'
     os.environ['PADDLESEG_EXPORT_STAGE'] = 'True'
 
-    # Load model from directory
-    model = load_model(args.model_dir)
+
+
+    # model = pdrs.tasks.STANet(in_channels=3, num_classes=2, att_type='PAM', ds_factor=1)   
+    model = pdrs.tasks.STANet(in_channels=3, num_classes=2, att_type='PAM', ds_factor=1)
+    model.net_initialize(pretrain_weights = args.state_dict_path)
 
     # Do dynamic-to-static cast
     # XXX: Invoke a protected (single underscore) method outside of subclasses.
