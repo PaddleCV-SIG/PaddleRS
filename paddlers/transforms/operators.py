@@ -1389,7 +1389,7 @@ class RandomBlur(Transform):
             n = int(1.0 / self.prob)
         if n > 0:
             if np.random.randint(0, n) == 0:
-                radius = np.random.randint(3, 10)
+                radius = np.random.randint(1, 2)
                 if radius % 2 != 1:
                     radius = radius + 1
                 if radius > 9:
