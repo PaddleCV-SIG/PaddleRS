@@ -169,7 +169,7 @@ bash  ./STANET_Paddle/test_tipc/prepare.sh  ./STANET_Paddle/test_tipc/configs/st
 bash  ./STANET_Paddle/test_tipc/test_train_inference_python.sh ./STANET_Paddle/test_tipc/configs/stanet/train_infer_python.txt 'lite_train_lite_infer'
 ```
 
-测试结果如截图所示，也可以在`test_tipc/ouput/SNUNET`文件夹下查看：
+测试结果如截图所示
 
 <img src=./docs/TIPC_result.png></img>
 
