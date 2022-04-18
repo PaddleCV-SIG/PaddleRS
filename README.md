@@ -125,7 +125,7 @@ OrderedDict([('miou', 0.8840882464473624), ('category_iou', array([0.98992372, 0
 
 ### 使用静态图推理
 
-可以使用eval_snunet.py脚本进行测试
+可以使用eval_stanet.py脚本进行测试
 
 ```shell
 !python ./STANET_Paddle/tutorials/infer/stanet_infer.py  --model_file ./inference_model/model.pdmodel --params_file ./inference_model/model.pdiparams   --img1=./dataset/train/A/train_1_3_1.png --img2=./dataset/train/B/train_1_3_1.png --out_dir=./
