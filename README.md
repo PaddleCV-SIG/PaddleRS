@@ -104,16 +104,11 @@ python /home/aistudio/PaddleRS/tools/create_list.py --image_folder ./dataset/tes
 输出如下：
 
 ```shell
-[04-12 12:24:42 MainThread @logger.py:242] Argv: tutorials/eval/snunet_eval.py --data_dir=../work/Real/subset --weight_path=./output/snunet/best_model/model.pdparams
-[04-12 12:24:42 MainThread @utils.py:79] WRN paddlepaddle version: 2.2.2. The dynamic graph version of PARL is under development, not fully tested and supported
-2022-04-12 12:24:42 [INFO]	10000 samples in file ../work/Real/subset/train.txt
-2022-04-12 12:24:42 [INFO]	3000 samples in file ../work/Real/subset/test.txt
-W0412 12:24:42.909528 21281 device_context.cc:447] Please NOTE: device: 0, GPU Compute Capability: 7.0, Driver API Version: 10.1, Runtime API Version: 10.1
-W0412 12:24:42.913775 21281 device_context.cc:465] device: 0, cuDNN Version: 7.6.
-2022-04-12 12:24:45 [INFO]	Loading pretrained model from ./output/snunet/best_model/model.pdparams
-2022-04-12 12:24:45 [INFO]	There are 186/186 variables loaded into SNUNet.
-2022-04-12 12:24:45 [INFO]	Start to evaluate(total_samples=3000, total_steps=3000)...
-OrderedDict([('miou', 0.9511789327930941), ('category_iou', array([0.98762963, 0.91472823])), ('oacc', 0.989078862508138), ('category_acc', array([0.99284724, 0.96190638])), ('kappa', 0.9492419817634077), ('category_F1-score', array([0.99377632, 0.95546534]))])
+2022-04-15 08:50:50 [INFO]	1024 samples in file val.txt
+2022-04-15 08:50:51 [INFO]	Loading pretrained model from output/stanet/best_model/model.pdparams
+2022-04-15 08:50:51 [INFO]	There are 186/186 variables loaded into STANet.
+2022-04-15 08:50:51 [INFO]	Start to evaluate(total_samples=1024, total_steps=1024)...
+OrderedDict([('miou', 0.8840882464473624), ('category_iou', array([0.98992372, 0.77825277])), ('oacc', 0.990267887711525), ('category_acc', array([0.99189824, 0.94670973])), ('kappa', 0.8702668237858971), ('category_F1-score', array([0.99493635, 0.8753005 ]))])
 ```
 
 
