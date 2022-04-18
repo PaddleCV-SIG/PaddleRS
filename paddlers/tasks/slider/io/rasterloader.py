@@ -63,7 +63,6 @@ class RasterLoader(object):
                 format(len(self.block_size), len(self.overlap)))
         self.transforms = []
         for op in transforms.transforms:
-            print(op.__class__.__name__)
             if op.__class__.__name__ in self.TS:
                 self.transforms.append(op)
         if len(self.transforms) >= 1:
