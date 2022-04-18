@@ -209,7 +209,7 @@ def to_uint8(im, is_linear=False):
     # 2% linear stretch
     def _two_percent_linear(image, max_out=255, min_out=0):
         def _gray_process(gray, maxout=max_out, minout=min_out):
-            # get the corresponding gray level at 100% histogram
+            # get the corresponding gray level at 98% histogram
             high_value = np.percentile(gray, 98)
             low_value = np.percentile(gray, 2)
             truncated_gray = np.clip(gray, a_min=low_value, a_max=high_value)
