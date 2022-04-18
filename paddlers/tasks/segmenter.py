@@ -28,6 +28,7 @@ from paddlers.utils import get_single_card_bs, DisablePrint
 import paddlers.utils.logging as logging
 from .base import BaseModel
 from .utils import seg_metrics as metrics
+from .slider import SegSlider
 from paddlers.utils.checkpoint import seg_pretrain_weights_dict
 from paddlers.transforms import ImgDecoder, Resize
 
@@ -524,7 +525,7 @@ class BaseSegmenter(BaseModel):
         for im in images:
             sample = {'image': im}
             if isinstance(sample['image'], str):
-                sample = ImgDecode(to_rgb=False)(sample)
+                sample = ImgDecoder(to_rgb=False)(sample)
             ori_shape = sample['image'].shape[:2]
             im = transforms(sample)[0]
             batch_im.append(im)
@@ -656,6 +657,19 @@ class BaseSegmenter(BaseModel):
             label_maps.append(label_map.squeeze())
             score_maps.append(score_map.squeeze())
         return label_maps, score_maps
+
+    def geo_infer(self, img_path, transforms=None, block_size=512, overlap=32):
+        """ Slide-infer with geo-info.
+
+        Args:
+            img_path (str): Path of geo-image.
+            transforms (Transform or None, optional): PaddleRS's transform. Defaults to None.
+            block_size (list or int, optional): Size of image's block. Defaults to 512.
+            overlap (list or int, optional): Overlap between two blocks. Defaults to 32.
+        """
+        slide_model = SegSlider(self.net, transforms)
+        slide_model.ready(block_size, overlap)
+        slide_model(img_path)
 
 
 class UNet(BaseSegmenter):
