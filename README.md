@@ -113,6 +113,10 @@ OrderedDict([('miou', 0.8840882464473624), ('category_iou', array([0.98992372, 0
 
 可以将模型导出，动态图转静态图，使模型预测更快，可以使用stanet_export.py脚本进行测试
 
+在这里因为动静态模型转化的问题，修改了stanet的模型代码使其可以转出静态模型。
+
+调试过程中参考这份文档   [报错调试](https://www.paddlepaddle.org.cn/documentation/docs/zh/guides/04_dygraph_to_static/debugging_cn.html)
+
 ```shell
 !python ./STANET_Paddle/deploy/export/stanet_export.py    --state_dict_path=./output/home/aistudio/output/stanet/best_model/model.pdparams    --save_dir=./inference_model/  --fixed_input_shape=[1,3,256,256]
 ```
