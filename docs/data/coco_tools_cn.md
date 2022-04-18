@@ -1,14 +1,14 @@
-# coco_utils说明
+# coco_tools说明
 
 ## 0.工具说明
 
-coco_utils是PaddleRS中，用coco类标注文件处理的工具集。
+coco_tools是PaddleRS中，用coco类标注文件处理的工具集，详见[tools/coco_tools/](tools/coco_tools/)。
 
-由于pycocotools库在部分环境下无法安装，因此可以使用coco_utils进行一些简单的文件处理工作。
+由于pycocotools库在部分环境下无法安装，因此可以使用coco_tools进行一些简单的文件处理工作。
 
 ## 1.文件说明
 
-目前coco_utils共有6个文件，各文件及其功能如下：
+目前coco_tools共有6个文件，各文件及其功能如下：
 
 * json_InfoShow:    打印json文件中各个字典的基本信息；
 * json_ImgSta:      统计json文件中的图像信息，生成统计表、统计图；
@@ -19,7 +19,7 @@ coco_utils是PaddleRS中，用coco类标注文件处理的工具集。
 
 ## 2. 应用案例说明
 
-通过本教程，你将快速学会PaddleRS中关于coco_utils的API调用，帮助你完成coco类数据集的信息统计、文件操作。
+通过本教程，你将快速学会PaddleRS中关于coco_tools的API调用，帮助你完成coco类数据集的信息统计、文件操作。
 
 ## 2.1 示例数据集
 
@@ -43,7 +43,7 @@ COCO 2017 文件结构
 |  |--...
 |  |--...
 |
-|--coco_utils    # coco_utils代码目录
+|--coco_tools    # coco_tools代码目录
 |  |--...
 |  |--...
 ```
@@ -59,7 +59,7 @@ COCO 2017 文件结构
 可以执行如下命令，打印`instances_val2017.json`信息
 
 ```
-python ./coco_utils/json_InfoShow.py \
+python ./coco_tools/json_InfoShow.py \
        --json_path=./annotations/instances_val2017.json \
        --show_num 5
 ```
@@ -181,7 +181,7 @@ categories键，对应的值为列表，共有80个元素，输出展示了前5�
 可以执行如下命令，打印`instances_val2017.json`信息
 
 ```
-python ./coco_utils/json_ImgSta.py \
+python ./coco_tools/json_ImgSta.py \
     --json_path=./annotations/instances_val2017.json \
     --csv_path=./img_sta/images.csv \
     --png_shape_path=./img_sta/images_shape.png \
@@ -247,7 +247,7 @@ csv save to ./img_sta/images.csv
 可以执行如下命令，打印`instances_val2017.json`信息
 
 ```
-python ./coco_utils/json_AnnoSta.py \
+python ./coco_tools/json_AnnoSta.py \
     --json_path=./annotations/instances_val2017.json \
     --csv_path=./anno_sta/annos.csv \
     --png_shape_path=./anno_sta/annos_shape.png \
@@ -360,7 +360,7 @@ csv save to ./anno_sta/annos.csv
 可以执行如下命令，统计并生成`test2017`信息
 
 ```
-python ./coco_utils/json_Img2Json.py \
+python ./coco_tools/json_Img2Json.py \
     --test_image_path=./test2017 \
     --json_train_path=./annotations/instances_val2017.json \
     --json_test_path=./test.json
@@ -447,7 +447,7 @@ json keys: dict_keys(['images', 'categories'])
 可以执行如下命令，拆分`instances_val2017.json`文件
 
 ```
-python ./coco_utils/json_Split.py \
+python ./coco_tools/json_Split.py \
     --json_all_path=./annotations/instances_val2017.json \
     --json_train_path=./instances_val2017_train.json \
     --json_val_path=./instances_val2017_val.json
@@ -501,7 +501,7 @@ anno total 36781, train 33119, val 3662
 可以执行如下命令，合并`instances_train2017.json、instances_val2017.json`文件
 
 ```
-python ./coco_utils/json_Merge.py \
+python ./coco_tools/json_Merge.py \
     --json1_path=./annotations/instances_train2017.json \
     --json2_path=./annotations/instances_val2017.json \
     --save_path=./instances_trainval2017.json
