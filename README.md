@@ -19,7 +19,7 @@ STANet设计了两种类型的自我注意模块。基本时空注意模块(BAM)
 | STANET | AdamW  | 100 | 8 | LEVIR | **0.8753005** | 0.77825277 |
 
 
-精度和loss可以用visualDL在`output\snunet\vdl_log\vdlrecords.1649682194.log`中查看。
+精度和loss可以用visualDL在`output\stanet\vdl_log\vdlrecords.1649956922.log`中查看。
 
 ## 3.环境依赖
 通过以下命令安装对应依赖
@@ -37,17 +37,12 @@ pip install -r requirements.txt
 数据集下载解压后需要生成.txt文件用于训练。执行以下命令。
 
 ```shell
-python ./data/process_cdd_data.py --data_dir=../work/Real/subset
-
 # 切片
 python /home/aistudio/PaddleRS/tools/spliter-cd.py --image_folder data/LEVIR-CD --block_size 256 --save_folder dataset
 # 创建列表
 python /home/aistudio/PaddleRS/tools/create_list.py --image_folder ./dataset/train --A A --B B --label label --save_txt train.txt
 python /home/aistudio/PaddleRS/tools/create_list.py --image_folder ./dataset/val --A A --B B --label label --save_txt val.txt
 python /home/aistudio/PaddleRS/tools/create_list.py --image_folder ./dataset/test --A A --B B --label label --save_txt test.txt
-
-
-
 ```
 
 
@@ -55,7 +50,7 @@ python /home/aistudio/PaddleRS/tools/create_list.py --image_folder ./dataset/tes
 
 ### 模型训练
 
-运行一下命令进行模型训练，在训练过程中会对模型进行评估，启用了VisualDL日志功能，运行之后在`/output/snunet/vdl_log` 文件夹下找到对应的日志文件
+运行一下命令进行模型训练，在训练过程中会对模型进行评估，启用了VisualDL日志功能，运行之后在`/output/stanet/vdl_log` 文件夹下找到对应的日志文件
 
 ```shell
 !python ./STANET_Paddle/tutorials/train/stanet_train.py --data_dir=./dataset/   --out_dir=./output/stanet/   --batch_size=8 
@@ -66,8 +61,9 @@ python /home/aistudio/PaddleRS/tools/create_list.py --image_folder ./dataset/tes
 - data_dir:数据集路径
 
 - out_dir:模型输出文件夹
+- batch_size：batch大小
 
-其他超参数在snunet.py文件中已经设置好。最后一个epoch结束，模型验证日志如下：
+其他超参数已经设置好。最后一个epoch结束，模型验证日志如下：
 ```shell
 2022-04-15 07:27:06 [INFO]	[TRAIN] Epoch=100/100, Step=730/890, loss=0.039839, lr=0.000000, time_each_step=0.23s, eta=0:0:36
 2022-04-15 07:27:11 [INFO]	[TRAIN] Epoch=100/100, Step=750/890, loss=0.012171, lr=0.000000, time_each_step=0.23s, eta=0:0:31
@@ -90,7 +86,7 @@ python /home/aistudio/PaddleRS/tools/create_list.py --image_folder ./dataset/tes
 
 ### 模型验证
 
-除了可以再训练过程中验证模型精度，可以使用eval_snunet.py脚本进行测试，权重文件可在[百度云盘下载](https://pan.baidu.com/s/1f7DRYNOxfcnxxVCv11HzdQ)，提取码:8c0c 
+除了可以再训练过程中验证模型精度，可以使用eval_stanet.py脚本进行测试，权重文件可在[百度云盘下载](https://pan.baidu.com/s/1f7DRYNOxfcnxxVCv11HzdQ)，提取码:8c0c 
 
 ```shell
 !python ./STANET_Paddle/tutorials/eval/stanet_eval.py --data_dir=./dataset/   --state_dict_path=./output/home/aistudio/output/stanet/best_model/model.pdparams
@@ -181,7 +177,7 @@ bash  ./STANET_Paddle/test_tipc/test_train_inference_python.sh ./STANET_Paddle/t
 ## 6.代码结构与详细说明
 
 ```
-SNUNet-Paddle
+StaNet-Paddle
 ├── deploy               # 部署相关的文档和脚本
 ├── docs                 # 整个项目图片
 ├── output               # 输出的VDL日志
