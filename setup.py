@@ -32,6 +32,7 @@ setuptools.setup(
     long_description_content_type="text/plain",
     url="https://github.com/PaddleCV-SIG/PaddleRS",
     packages=setuptools.find_packages(),
+    python_requires='>=3.7',
     setup_requires=['cython', 'numpy'],
     install_requires=REQUIRED_PACKAGES,
     # [
@@ -41,7 +42,9 @@ setuptools.setup(
     #     'openpyxl', 'gdal'
     # ],
     classifiers=[
-        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
     ],
