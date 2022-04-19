@@ -16,7 +16,7 @@ import setuptools
 
 DESCRIPTION = "Awesome Remote Sensing Toolkit based on PaddlePaddle"
 
-with open("README.md", "r") as fh:
+with open("README.md", "r", encoding='utf8') as fh:
     LONG_DESCRIPTION = fh.read()
 
 with open("requirements.txt") as fin:
