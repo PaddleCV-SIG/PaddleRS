@@ -45,7 +45,7 @@ def split_data(image_path, mask_path, block_size, save_folder):
             image_title.save(image_save_path, "JPEG")
             if mask is not None:
                 mask_title = Image.fromarray(mask.getArray(
-                    loc_start, (block_size, block_size))).convert("RGB")
+                    loc_start, (block_size, block_size))).convert("L")
                 mask_save_path = osp.join(save_folder, "masks", (
                     image_name + "_" + str(r) + "_" + str(c) + ".png"))
                 mask_title.save(mask_save_path, "PNG")
