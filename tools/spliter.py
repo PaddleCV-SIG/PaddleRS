@@ -38,14 +38,14 @@ def split_data(image_path, mask_path, block_size, save_folder):
     for r in range(rows):
         for c in range(cols):
             loc_start = (c * block_size, r * block_size)
-            image_title = Image.fromarray(
-                image.getArray(loc_start, (block_size, block_size)))
+            image_title = Image.fromarray(image.getArray(
+                loc_start, (block_size, block_size))).convert("RGB")
             image_save_path = osp.join(save_folder, "images", (
                 image_name + "_" + str(r) + "_" + str(c) + ".jpg"))
             image_title.save(image_save_path, "JPEG")
             if mask is not None:
-                mask_title = Image.fromarray(
-                    mask.getArray(loc_start, (block_size, block_size)))
+                mask_title = Image.fromarray(mask.getArray(
+                    loc_start, (block_size, block_size))).convert("RGB")
                 mask_save_path = osp.join(save_folder, "masks", (
                     image_name + "_" + str(r) + "_" + str(c) + ".png"))
                 mask_title.save(mask_save_path, "PNG")
