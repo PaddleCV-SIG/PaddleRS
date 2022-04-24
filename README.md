@@ -172,6 +172,9 @@ bash  ./STANET_Paddle/test_tipc/test_train_inference_python.sh ./STANET_Paddle/t
 
 测试结果如截图所示
 
+<img src=./docs/TIPC_pre.png></img>
+
+<img src=./docs/TIPC_next.png></img>
 <img src=./docs/TIPC_result.png></img>
 
 ## 6.代码结构与详细说明
