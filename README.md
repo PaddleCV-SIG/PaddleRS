@@ -143,7 +143,11 @@ OrderedDict([('miou', 0.8840882464473624), ('category_iou', array([0.98992372, 0
 ```shell
 !python ./STANET_Paddle/tutorials/predict/stanet_predict.py --img1=./STANET_Paddle/test_tipc/data/mini_levir_dataset/test/A/test_1_0_3.png --img2=./STANET_Paddle/test_tipc/data/mini_levir_dataset/test/B/test_1_0_3.png   --state_dict_path=./output/home/aistudio/output/stanet/best_model/model.pdparams   --out_dir=./
 ```
-
+**参数介绍**：
+- img1:A时相影像路径
+- img2：B时相影像路径
+- state_dict_path：模型文件路径
+- out_dir：预测结果输出路径
 - 预测结果与真实值对比
 
 | 前时相 | 后时相 | 预测结果 | 真值 |
