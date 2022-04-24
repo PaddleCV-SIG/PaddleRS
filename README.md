@@ -37,12 +37,11 @@ pip install -r requirements.txt
 数据集下载解压后需要生成.txt文件用于训练。执行以下命令。
 
 ```shell
-# 切片
-python /home/aistudio/PaddleRS/tools/spliter-cd.py --image_folder data/LEVIR-CD --block_size 256 --save_folder dataset
+python ./STANET_Paddle/tools/spliter-cd.py  --image_folder  data/LEVIR-CD --block_size 256 --save_folder dataset
 # 创建列表
-python /home/aistudio/PaddleRS/tools/create_list.py --image_folder ./dataset/train --A A --B B --label label --save_txt train.txt
-python /home/aistudio/PaddleRS/tools/create_list.py --image_folder ./dataset/val --A A --B B --label label --save_txt val.txt
-python /home/aistudio/PaddleRS/tools/create_list.py --image_folder ./dataset/test --A A --B B --label label --save_txt test.txt
+python ./STANET_Paddle/tools/create_list.py --image_folder ./dataset/train --A A --B B --label label --save_txt train.txt
+python ./STANET_Paddle/tools/create_list.py --image_folder ./dataset/val --A A --B B --label label --save_txt val.txt
+python ./STANET_Paddle/tools/create_list.py --image_folder ./dataset/test --A A --B B --label label --save_txt test.txt
 ```
 
 
@@ -129,18 +128,15 @@ OrderedDict([('miou', 0.8840882464473624), ('category_iou', array([0.98992372, 0
 
 ### 使用静态图推理
 
-可以使用eval_stanet.py脚本进行测试
+可以使用stanet_infer.py脚本进行测试
 
 ```shell
-!python ./STANET_Paddle/tutorials/infer/stanet_infer.py  --model_file ./inference_model/model.pdmodel --params_file ./inference_model/model.pdiparams   --img1=./dataset/train/A/train_1_3_1.png --img2=./dataset/train/B/train_1_3_1.png --out_dir=./
+!python ./STANET_Paddle/tutorials/infer/stanet_infer.py   --infer_dir=./inference_model   --img_dir=./STANET_Paddle/test_tipc/data/mini_levir_dataset --output_dir=./STANET_Paddle/test_tipc/result/predict_output
 ```
 **参数介绍**：
-- model_file:模型文件路径
-- params_file  模型参数路径
-- state_dict_path:模型权重所在路径
-- mg1:前时相图片所在路径
-- mg2:后时相图片所在路径
-- out_dir：预测结果输出路径
+- infer_dir:模型文件路径
+- img_dir：用于推理的图片路径
+- output_dir：预测结果输出路径
 
 
 A时相图像
@@ -199,7 +195,7 @@ StaNet-Paddle
       └── train          # 模型训练
       └── eval           # 模型评估和TIPC训练
       └── infer          # 模型推理
-
+      └── predict        # 模型预测
 
 ```
 
