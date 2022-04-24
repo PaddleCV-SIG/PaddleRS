@@ -131,7 +131,6 @@ class BIT(nn.Layer):
             Conv3x3(EBD_DIM, num_classes))
 
     def _get_semantic_tokens(self, x):
-        #b, c = paddle.shape(x)[:2]
         b, c = x.numpy().shape[:2]
         att_map = self.conv_att(x)
 
@@ -139,7 +138,6 @@ class BIT(nn.Layer):
         att_map = F.softmax(att_map, axis=-1)
 
         x = x.reshape((b, 1, c, -1))
-        #print("x:{}".format(x.shape))
         tokens = (x * att_map).sum(-1)
 
         return tokens
@@ -161,7 +159,6 @@ class BIT(nn.Layer):
         return x
 
     def decode(self, x, m):
-        #b, c, h, w = paddle.shape(x)
         b, c, h, w = x.numpy().shape
         x = x.transpose((0, 2, 3, 1)).flatten(1, 2)
         x = self.decoder(x, m)
@@ -274,7 +271,6 @@ class CrossAttention(nn.Layer):
             nn.Linear(inner_dim, dim), nn.Dropout(dropout_rate))
 
     def forward(self, x, ref):
-        #b, n = paddle.shape(x)[:2]
         b, n = x.numpy().shape[:2]
         h = self.n_heads
 
