@@ -44,7 +44,7 @@ if __name__ == "__main__":
     TRAIN_FILE_LIST_PATH = os.path.join(DATA_DIR,'train.txt')
     EVAL_FILE_LIST_PATH = os.path.join(DATA_DIR,'val.txt')
     TESTLE_LIST_PATH = os.path.join(DATA_DIR,'test.txt')
-    LABEL_LIST_PATH = os.path.join(DATA_DIR,'labels.txt')
+ 
     EXP_DIR = args.out_dir
     LR = args.lr
     DECAY_STEP = args.decay_step
@@ -66,27 +66,31 @@ if __name__ == "__main__":
         T.Normalize(
           mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),
     ])
+
     # 定义训练和验证所用的数据集
     # API说明：https://github.com/PaddlePaddle/paddlers/blob/develop/docs/apis/datasets.md
     train_dataset = pdrs.datasets.CDDataset(
         data_dir=DATA_DIR+'/train',
         file_list=TRAIN_FILE_LIST_PATH,
-        label_list=LABEL_LIST_PATH,
+        label_list=None,
         transforms=train_transforms,
-        num_workers=2,
+        num_workers=0,
         binarize_labels=True,
-        shuffle=True)
+        shuffle=True,
+        with_seg_labels=False,
+        )
     eval_dataset = pdrs.datasets.CDDataset(
         data_dir=DATA_DIR+'/val',
         file_list=EVAL_FILE_LIST_PATH,
-        label_list=LABEL_LIST_PATH,
+        label_list= None,
         transforms=eval_transforms,
-        num_workers=2,
+        num_workers=0,
         binarize_labels=True,
-    shuffle=False)
+        with_seg_labels=False,
+        shuffle=False)
     # 初始化模型，并进行训练
     # 可使用VisualDL查看训练指标，参考https://github.com/PaddlePaddle/paddlers/blob/develop/docs/visualdl.md
-    num_classes = len(train_dataset.labels)
+    num_classes = 2
     model = pdrs.tasks.STANet( in_channels=3, num_classes=num_classes, att_type='PAM', ds_factor=1)
     # 制定定步长学习率衰减策略
     lr_scheduler = paddle.optimizer.lr.StepDecay(
