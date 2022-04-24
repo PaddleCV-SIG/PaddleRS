@@ -37,13 +37,25 @@ pip install -r requirements.txt
 数据集下载解压后需要生成.txt文件用于训练。执行以下命令。
 
 ```shell
+#切片
 python ./STANET_Paddle/tools/spliter-cd.py  --image_folder  data/LEVIR-CD --block_size 256 --save_folder dataset
+```
+**参数介绍**：
+
+- image_folder:数据集路径
+- block_size:切片大小
+- save_folder:保存路径
+ ```shell
 # 创建列表
 python ./STANET_Paddle/tools/create_list.py --image_folder ./dataset/train --A A --B B --label label --save_txt train.txt
 python ./STANET_Paddle/tools/create_list.py --image_folder ./dataset/val --A A --B B --label label --save_txt val.txt
 python ./STANET_Paddle/tools/create_list.py --image_folder ./dataset/test --A A --B B --label label --save_txt test.txt
 ```
+**参数介绍**：
 
+- image_folder:切片后数据集路径
+- -A  -B  -label :A时相、B时相、label的子路径名
+- save_txt:保存名
 
 ## 5.快速开始
 
