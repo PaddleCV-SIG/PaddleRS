@@ -138,15 +138,15 @@ OrderedDict([('miou', 0.8840882464473624), ('category_iou', array([0.98992372, 0
 - img_dir：用于推理的图片路径
 - output_dir：预测结果输出路径
 
+### 使用动态图预测
 
-A时相图像
-<img src=./docs/Atrain_1_3_1.png></img>
-B时相图像
-<img src=./docs/Btrain_1_3_1.png></img>
-标签图像
-<img src=./docs/Ltrain_1_3_1.png></img>
-预测图像
-<img src=./docs/result.png></img>
+
+
+- 预测结果与真实值对比
+
+| 前时相 | 后时相 | 预测结果 | 真值 |
+|---|---|---| --- |
+|![](./docs/Atrain_1_3_1.png)|![](./docs/Btrain_1_3_1.png) |![](./docs/result.png)| ![](./docs/Ltrain_1_3_1.png)|
 
 
 
@@ -172,10 +172,10 @@ bash  ./STANET_Paddle/test_tipc/test_train_inference_python.sh ./STANET_Paddle/t
 
 测试结果如截图所示
 
-<img src=./docs/TIPC_pre.png></img>
+<img src=./docs/TIFC_pre.png></img>
 
-<img src=./docs/TIPC_next.png></img>
-<img src=./docs/TIPC_result.png></img>
+<img src=./docs/TIFC_next.png></img>
+<img src=./docs/TIFC_result.png></img>
 
 ## 6.代码结构与详细说明
 
