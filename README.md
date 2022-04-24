@@ -146,7 +146,7 @@ OrderedDict([('miou', 0.8840882464473624), ('category_iou', array([0.98992372, 0
 
 | 前时相 | 后时相 | 预测结果 | 真值 |
 |---|---|---| --- |
-|![](./docs/Atrain_1_3_1.png)|![](./docs/Btrain_1_3_1.png) |![](./docs/result.png)| ![](./docs/Ltrain_1_3_1.png)|
+|![](./docs/a.png)|![](./docs/b.png) |![](./docs/result.png)| ![](./docs/label.png)|
 
 
 
