@@ -195,7 +195,7 @@ StaNet-Paddle
       └── train          # 模型训练
       └── eval           # 模型评估和TIPC训练
       └── infer          # 模型推理
-      └── predict        # 模型预测
+      └── predict        # 动态模型预测
 
 ```
 
