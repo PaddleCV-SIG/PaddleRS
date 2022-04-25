@@ -56,7 +56,7 @@ class BaseClassifier(BaseModel):
         self.in_channels = in_channels
         self.num_classes = num_classes
         self.use_mixed_loss = use_mixed_loss
-        self.metrics = None
+        self.metrics = default_metric()
         self.losses = None
         self.labels = None
         self._postprocess = None
@@ -221,7 +221,7 @@ class BaseClassifier(BaseModel):
         self.labels = train_dataset.labels
         if self.losses is None:
             self.losses = self.default_loss()
-        self.metrics = self.default_metric()
+        # self.metrics = self.default_metric()
         self._postprocess = self.default_postprocess(train_dataset.label_list)
         # print(self._postprocess.class_id_map)
 
