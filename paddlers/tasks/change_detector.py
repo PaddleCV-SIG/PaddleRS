@@ -408,7 +408,7 @@ class BaseChangeDetector(BaseModel):
             batch_size_each_card = 1
             batch_size = batch_size_each_card * paddlers.env_info['num']
             logging.warning(
-                "Segmenter only supports batch_size=1 for each gpu/cpu card " \
+                "ChangeDetector only supports batch_size=1 for each gpu/cpu card " \
                 "during evaluation, so batch_size " \
                 "is forcibly set to {}.".format(batch_size)
             )
