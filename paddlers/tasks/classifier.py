@@ -43,6 +43,7 @@ class BaseClassifier(BaseModel):
                  in_channels=3,
                  num_classes=2,
                  use_mixed_loss=False,
+                 label_list=None,
                  **params):
         self.init_params = locals()
         if 'with_net' in self.init_params:
@@ -56,10 +57,10 @@ class BaseClassifier(BaseModel):
         self.in_channels = in_channels
         self.num_classes = num_classes
         self.use_mixed_loss = use_mixed_loss
-        self.metrics = None
+        self.metrics = self.default_metric()
         self.losses = None
         self.labels = None
-        self._postprocess = None
+        self._postprocess = self.default_postprocess(label_list) if label_list is not None else None
         if params.get('with_net', True):
             params.pop('with_net', None)
             self.net = self.build_net(**params)
@@ -79,6 +80,12 @@ class BaseClassifier(BaseModel):
                 net = model(class_num=self.num_classes, **params)
                 self.in_channels = 3
         return net
+
+    def load(self, params_path):
+        if osp.exists(params_path) and params_path.split(".")[-1] == "pdparams":
+            self.net.set_dict(paddle.load(params_path))
+        else:
+            raise FileNotFoundError("{} is not a valid path.".format(params_path))
 
     def _fix_transforms_shape(self, image_shape):
         if hasattr(self, 'test_transforms'):
@@ -221,7 +228,7 @@ class BaseClassifier(BaseModel):
         self.labels = train_dataset.labels
         if self.losses is None:
             self.losses = self.default_loss()
-        self.metrics = self.default_metric()
+        # self.metrics = self.default_metric()
         self._postprocess = self.default_postprocess(train_dataset.label_list)
         # print(self._postprocess.class_id_map)
 
@@ -449,7 +456,7 @@ class BaseClassifier(BaseModel):
             if isinstance(sample['image'], str):
                 sample = ImgDecoder(to_rgb=False)(sample)
             ori_shape = sample['image'].shape[:2]
-            im = transforms(sample)[0]
+            im = transforms(sample)  # [0]
             batch_im.append(im)
             batch_ori_shape.append(ori_shape)
         if to_tensor:
