@@ -214,9 +214,7 @@ class BAM(nn.Layer):
 
         out = F.interpolate(out, scale_factor=self.ds)
         out = out + x
-        g1=tuple(out.shape[:-1])
-        g2= tuple([out.shape[-1] // 2, 2])
-        return out.reshape(g1 + g2)
+        return out.reshape(tuple(out.shape[:-1]) +tuple([out.shape[-1] // 2, 2]))
 
 
 class PAMBlock(nn.Layer):
@@ -298,13 +296,9 @@ class PAM(nn.Layer):
         x = x.flatten(-2)
         res = [stage(x) for stage in self.stages]
 
-
-    
         out = self.conv_out(paddle.concat(res, axis=1))
 
-        g1=tuple(out.shape[:-1])
-        g2= tuple([out.shape[-1] // 2, 2])
-        return out.reshape(g1 + g2)
+        return out.reshape(tuple(out.shape[:-1]) + tuple([out.shape[-1] // 2, 2]))
 
 
 class Attention(nn.Layer):

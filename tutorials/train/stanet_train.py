@@ -5,9 +5,6 @@ import sys
 import paddle
 import os
 import argparse
-
-#加入环境
-sys.path.append('./STANET_Paddle/')
 import paddlers as pdrs
 from paddlers import transforms as T
 import paddle.nn as nn
@@ -23,19 +20,6 @@ def get_parser():
     parser.add_argument('--save_epoch', type=int, default=3 ,help='save epoch')
     return parser
 
-# # 数据集存放目录
-# DATA_DIR = './dataset'
-# # 训练集`file_list`文件路径
-# TRAIN_FILE_LIST_PATH = './dataset/train.txt'
-# # 验证集`file_list`文件路径
-# EVAL_FILE_LIST_PATH = './dataset/test.txt'
-# # 实验目录，保存输出的模型权重和结果
-# EXP_DIR = './output/stanet/'
-# # 初始学习率
-# LR = 0.001
-# # 学习率衰减步长（注意，单位为迭代次数而非epoch数），即每多少次迭代将学习率衰减一半
-# DECAY_STEP = 5000
-# # 制定定步长学习率衰减策略
 
 if __name__ == "__main__":
     parser = get_parser()

@@ -17,8 +17,6 @@ import os.path as osp
 import argparse
 from ast import literal_eval
 import sys
-#加入环境
-sys.path.append('./STANET_Paddle/')
 import paddlers  as pdrs
 def get_parser():
     parser = argparse.ArgumentParser()

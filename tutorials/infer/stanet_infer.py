@@ -1,6 +1,4 @@
 import sys
-#加入环境
-sys.path.append('./STANET_Paddle/')
 import os
 import cv2
 import argparse

@@ -19,17 +19,6 @@ from math import ceil
 from PIL import Image
 import numpy as np
 
-
-# from utils import Raster
-
-
-# def file_name(file_dir):
-#     for root, dirs, files in os.walk(file_dir):
-#         print('root_dir:', root)  # 当前目录路径
-#         print('sub_dirs:', dirs)  # 当前路径下所有子目录
-#         print('files:', files)  # 当前路径下所有非目录子文件
-
-
 def GetFileNameAndExt(filename):
     (filepath, tempfilename) = os.path.split(filename);
     (shotname, extension) = os.path.splitext(tempfilename);
@@ -67,4 +56,3 @@ parser.add_argument("--save_txt", type=str, required=True, \
 if __name__ == "__main__":
     args = parser.parse_args()
     create_list(args.image_folder, args.A,args.B,args.label, args.save_txt)
-    # create_list("../dataset/train", "A", "B", "label", 'train.txt')

@@ -57,4 +57,3 @@ parser.add_argument("--save_folder", type=str, default="output", \
 if __name__ == "__main__":
     args = parser.parse_args()
     split_data_cd(args.image_folder, args.block_size, args.save_folder)
-    # split_data_cd("/home/dl/下载/levir-cd", 256, "./dataset")

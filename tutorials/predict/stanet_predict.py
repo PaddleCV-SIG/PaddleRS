@@ -2,8 +2,6 @@ import sys
 import paddle
 import os
 import argparse
-#加入环境
-sys.path.append('./STANET_Paddle/')
 import paddlers as pdrs
 from paddlers import transforms as T
 import paddle.nn as nn
