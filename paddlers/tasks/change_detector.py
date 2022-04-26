@@ -381,6 +381,12 @@ class BaseChangeDetector(BaseModel):
 
         Returns:
             collections.OrderedDict with key-value pairs:
+                For binary change detection (number of classes == 2), the key-value pairs are like:
+                {"iou": `intersection over union for the change class`,
+                 "f1": `F1 score for the change class`,
+                 "oacc": `overall accuracy`,
+                 "kappa": ` kappa coefficient`}.
+                For multi-class change detection (number of classes > 2), the key-value pairs are like:
                 {"miou": `mean intersection over union`,
                  "category_iou": `category-wise mean intersection over union`,
                  "oacc": `overall accuracy`,
@@ -471,11 +477,17 @@ class BaseChangeDetector(BaseModel):
                                               label_area_all)
         category_f1score = metrics.f1_score(intersect_area_all, pred_area_all,
                                             label_area_all)
-        eval_metrics = OrderedDict(
-            zip([
-                'miou', 'category_iou', 'oacc', 'category_acc', 'kappa',
-                'category_F1-score'
-            ], [miou, class_iou, oacc, class_acc, kappa, category_f1score]))
+
+        if len(class_acc) > 2:
+            eval_metrics = OrderedDict(
+                zip([
+                    'miou', 'category_iou', 'oacc', 'category_acc', 'kappa',
+                    'category_F1-score'
+                ], [miou, class_iou, oacc, class_acc, kappa, category_f1score]))
+        else:
+            eval_metrics = OrderedDict(
+                zip(['iou', 'f1', 'oacc', 'kappa'],
+                    [class_iou[1], category_f1score[1], oacc, kappa]))
 
         if return_details:
             conf_mat = sum(conf_mat_all)
