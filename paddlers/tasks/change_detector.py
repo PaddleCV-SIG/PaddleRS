@@ -16,6 +16,7 @@ import math
 import os.path as osp
 from collections import OrderedDict
 from operator import attrgetter
+from collections.abc import Sequence
 
 import cv2
 import numpy as np
@@ -183,20 +184,21 @@ class BaseChangeDetector(BaseModel):
                 ]
             else:
                 loss_type = [paddleseg.models.CrossEntropyLoss()]
+            losses = {'types': loss_type, 'coef': loss_coef}
+        elif isinstance(self.use_mixed_loss, dict):
+            losses = self.use_mixed_loss
+            if 'types' not in losses \
+                or 'coef' not in losses \
+                or not isinstance(losses['types'], list) \
+                or not isinstance(losses['coef'], list) \
+                or not len(losses['types']) == len(losses['coef']):
+                raise ValueError("Loss dict is not in the correct format!")
+        elif isinstance(self.use_mixed_loss, Sequence):
+            losses = list(self.use_mixed_loss)
+            losses = {'types': losses, 'coef': [1.0] * len(losses)}
         else:
-            losses, coef = list(zip(*self.use_mixed_loss))
-            if not set(losses).issubset(
-                ['CrossEntropyLoss', 'DiceLoss', 'LovaszSoftmaxLoss']):
-                raise ValueError(
-                    "Only 'CrossEntropyLoss', 'DiceLoss', 'LovaszSoftmaxLoss' are supported."
-                )
-            losses = [getattr(paddleseg.models, loss)() for loss in losses]
-            loss_type = [
-                paddleseg.models.MixedLoss(
-                    losses=losses, coef=list(coef))
-            ]
-        loss_coef = [1.0]
-        losses = {'types': loss_type, 'coef': loss_coef}
+            losses = {'types': [self.use_mixed_loss], 'coef': [1.0]}
+
         return losses
 
     def default_optimizer(self,
@@ -828,7 +830,9 @@ class DSIFN(BaseChangeDetector):
                 'coef': [1.0] * 5
             }
         else:
-            raise ValueError(f"Currently `use_mixed_loss` must be set to False for {self.__class__}")
+            raise ValueError(
+                f"Currently `use_mixed_loss` must be set to False for {self.__class__}"
+            )
 
 
 class DSAMNet(BaseChangeDetector):
@@ -860,7 +864,9 @@ class DSAMNet(BaseChangeDetector):
                 'coef': [1.0, 0.05, 0.05]
             }
         else:
-            raise ValueError(f"Currently `use_mixed_loss` must be set to False for {self.__class__}")
+            raise ValueError(
+                f"Currently `use_mixed_loss` must be set to False for {self.__class__}"
+            )
 
 
 class ChangeStar(BaseChangeDetector):
@@ -892,4 +898,6 @@ class ChangeStar(BaseChangeDetector):
                 'coef': [1.0] * 4
             }
         else:
-            raise ValueError(f"Currently `use_mixed_loss` must be set to False for {self.__class__}")
+            raise ValueError(
+                f"Currently `use_mixed_loss` must be set to False for {self.__class__}"
+            )

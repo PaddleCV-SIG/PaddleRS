@@ -14,22 +14,25 @@
 
 import math
 import os.path as osp
-import numpy as np
-import cv2
 from collections import OrderedDict
+from collections.abc import Sequence
+
+import cv2
+import numpy as np
 import paddle
 import paddle.nn.functional as F
-from paddle.static import InputSpec
+import paddlers
+import paddlers.utils.logging as logging
 import paddlers.models.ppseg as paddleseg
 import paddlers.custom_models.seg as cmseg
-import paddlers
+from paddle.static import InputSpec
 from paddlers.transforms import arrange_transforms
 from paddlers.utils import get_single_card_bs, DisablePrint
-import paddlers.utils.logging as logging
-from .base import BaseModel
-from .utils import seg_metrics as metrics
 from paddlers.utils.checkpoint import seg_pretrain_weights_dict
 from paddlers.transforms import ImgDecoder, Resize
+
+from .base import BaseModel
+from .utils import seg_metrics as metrics
 
 __all__ = ["UNet", "DeepLabV3P", "FastSCNN", "HRNet", "BiSeNetV2", "FarSeg"]
 
@@ -164,27 +167,29 @@ class BaseSegmenter(BaseModel):
                 ]
             else:
                 loss_type = [paddleseg.models.CrossEntropyLoss()]
+            if self.model_name == 'FastSCNN':
+                loss_type *= 2
+                loss_coef = [1.0, 0.4]
+            elif self.model_name == 'BiSeNetV2':
+                loss_type *= 5
+                loss_coef = [1.0] * 5
+            else:
+                loss_coef = [1.0]
+            losses = {'types': loss_type, 'coef': loss_coef}
+        elif isinstance(self.use_mixed_loss, dict):
+            losses = self.use_mixed_loss
+            if 'types' not in losses \
+                or 'coef' not in losses \
+                or not isinstance(losses['types'], list) \
+                or not isinstance(losses['coef'], list) \
+                or not len(losses['types']) == len(losses['coef']):
+                raise ValueError("Loss dict is not in the correct format!")
+        elif isinstance(self.use_mixed_loss, Sequence):
+            losses = list(self.use_mixed_loss)
+            losses = {'types': losses, 'coef': [1.0] * len(losses)}
         else:
-            losses, coef = list(zip(*self.use_mixed_loss))
-            if not set(losses).issubset(
-                ['CrossEntropyLoss', 'DiceLoss', 'LovaszSoftmaxLoss']):
-                raise ValueError(
-                    "Only 'CrossEntropyLoss', 'DiceLoss', 'LovaszSoftmaxLoss' are supported."
-                )
-            losses = [getattr(paddleseg.models, loss)() for loss in losses]
-            loss_type = [
-                paddleseg.models.MixedLoss(
-                    losses=losses, coef=list(coef))
-            ]
-        if self.model_name == 'FastSCNN':
-            loss_type *= 2
-            loss_coef = [1.0, 0.4]
-        elif self.model_name == 'BiSeNetV2':
-            loss_type *= 5
-            loss_coef = [1.0] * 5
-        else:
-            loss_coef = [1.0]
-        losses = {'types': loss_type, 'coef': loss_coef}
+            losses = {'types': [self.use_mixed_loss], 'coef': [1.0]}
+
         return losses
 
     def default_optimizer(self,
