@@ -408,7 +408,7 @@ class BaseChangeDetector(BaseModel):
             batch_size_each_card = 1
             batch_size = batch_size_each_card * paddlers.env_info['num']
             logging.warning(
-                "Segmenter only supports batch_size=1 for each gpu/cpu card " \
+                "ChangeDetector only supports batch_size=1 for each gpu/cpu card " \
                 "during evaluation, so batch_size " \
                 "is forcibly set to {}.".format(batch_size)
             )
@@ -488,14 +488,14 @@ class BaseChangeDetector(BaseModel):
         Do inference.
         Args:
             Args:
-            img_file(List[np.ndarray or str], str or np.ndarray):
-                Image path or decoded image data in a BGR format, which also could constitute a list,
-                meaning all images to be predicted as a mini-batch.
+            img_file(List[tuple], Tuple[str or np.ndarray]):
+                Tuple of image paths or decoded image data in a BGR format for bi-temporal images, which also could constitute 
+                a list, meaning all image pairs to be predicted as a mini-batch.
             transforms(paddlers.transforms.Compose or None, optional):
                 Transforms for inputs. If None, the transforms for evaluation process will be used. Defaults to None.
 
         Returns:
-            If img_file is a string or np.array, the result is a dict with key-value pairs:
+            If img_file is a tuple of string or np.array, the result is a dict with key-value pairs:
             {"label map": `label map`, "score_map": `score map`}.
             If img_file is a list, the result is a list composed of dicts with the corresponding fields:
             label_map(np.ndarray): the predicted label map (HW)
@@ -506,14 +506,18 @@ class BaseChangeDetector(BaseModel):
             raise Exception("transforms need to be defined, now is None.")
         if transforms is None:
             transforms = self.test_transforms
-        if isinstance(img_file, (str, np.ndarray)):
+        if isinstance(img_file, tuple):
+            if not len(img_file) == 2 and any(
+                    map(lambda obj: not isinstance(obj, (str, np.ndarray)),
+                        img_file)):
+                raise TypeError
             images = [img_file]
         else:
             images = img_file
-        batch_im, batch_origin_shape = self._preprocess(images, transforms,
-                                                        self.model_type)
+        batch_im1, batch_im2, batch_origin_shape = self._preprocess(
+            images, transforms, self.model_type)
         self.net.eval()
-        data = (batch_im, batch_origin_shape, transforms.transforms)
+        data = (batch_im1, batch_im2, batch_origin_shape, transforms.transforms)
         outputs = self.run(self.net, data, 'test')
         label_map_list = outputs['label_map']
         score_map_list = outputs['score_map']
@@ -828,7 +832,9 @@ class DSIFN(BaseChangeDetector):
                 'coef': [1.0] * 5
             }
         else:
-            raise ValueError(f"Currently `use_mixed_loss` must be set to False for {self.__class__}")
+            raise ValueError(
+                f"Currently `use_mixed_loss` must be set to False for {self.__class__}"
+            )
 
 
 class DSAMNet(BaseChangeDetector):
@@ -860,7 +866,9 @@ class DSAMNet(BaseChangeDetector):
                 'coef': [1.0, 0.05, 0.05]
             }
         else:
-            raise ValueError(f"Currently `use_mixed_loss` must be set to False for {self.__class__}")
+            raise ValueError(
+                f"Currently `use_mixed_loss` must be set to False for {self.__class__}"
+            )
 
 
 class ChangeStar(BaseChangeDetector):
@@ -892,4 +900,6 @@ class ChangeStar(BaseChangeDetector):
                 'coef': [1.0] * 4
             }
         else:
-            raise ValueError(f"Currently `use_mixed_loss` must be set to False for {self.__class__}")
+            raise ValueError(
+                f"Currently `use_mixed_loss` must be set to False for {self.__class__}"
+            )
