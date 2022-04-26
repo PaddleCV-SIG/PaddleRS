@@ -37,12 +37,16 @@ def convert_data(image_path, geojson_path):
         geo = feat["geometry"]
         if geo["type"] == "Polygon":  # 多边形
             geo_points = geo["coordinates"][0]
-            xy_points = np.array([
-                _gt_convert(point[0], point[1], raster.geot)
-                for point in geo_points
-            ]).astype(np.int32)
-            # TODO: Label category
-            cv2.fillPoly(tmp_img, [xy_points], 1)  # 多边形填充
+        elif geo["type"] == "MultiPolygon":  # 多面
+            geo_points = geo["coordinates"][0][0]
+        else:
+            raise TypeError("Geometry type must be `Polygon` or `MultiPolygon`, not {}.".format(geo["type"]))
+        xy_points = np.array([
+            _gt_convert(point[0], point[1], raster.geot)
+            for point in geo_points
+        ]).astype(np.int32)
+        # TODO: Label category
+        cv2.fillPoly(tmp_img, [xy_points], 1)  # 多边形填充
     ext = "." + geojson_path.split(".")[-1]
     save_mask_geotiff(tmp_img, geojson_path.replace(ext, ".tif"), raster.proj, raster.geot)
 
