@@ -21,7 +21,6 @@ from .backbones import resnet
 from .layers import Conv3x3, Conv1x1, get_norm_layer, Identity
 from .param_init import KaimingInitMixin
 
-import numpy as np
 
 
 class BIT(nn.Layer):
