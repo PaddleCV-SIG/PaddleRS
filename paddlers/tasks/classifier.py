@@ -81,12 +81,6 @@ class BaseClassifier(BaseModel):
                 self.in_channels = 3
         return net
 
-    def load(self, params_path):
-        if osp.exists(params_path) and params_path.split(".")[-1] == "pdparams":
-            self.net.set_dict(paddle.load(params_path))
-        else:
-            raise FileNotFoundError("{} is not a valid path.".format(params_path))
-
     def _fix_transforms_shape(self, image_shape):
         if hasattr(self, 'test_transforms'):
             if self.test_transforms is not None:
@@ -456,7 +450,7 @@ class BaseClassifier(BaseModel):
             if isinstance(sample['image'], str):
                 sample = ImgDecoder(to_rgb=False)(sample)
             ori_shape = sample['image'].shape[:2]
-            im = transforms(sample)  # [0]
+            im = transforms(sample)
             batch_im.append(im)
             batch_ori_shape.append(ori_shape)
         if to_tensor:
