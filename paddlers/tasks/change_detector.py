@@ -830,9 +830,7 @@ class DSIFN(BaseChangeDetector):
                 'coef': [1.0] * 5
             }
         else:
-            raise ValueError(
-                f"Currently `use_mixed_loss` must be set to False for {self.__class__}"
-            )
+            return super().default_loss()
 
 
 class DSAMNet(BaseChangeDetector):
@@ -864,9 +862,7 @@ class DSAMNet(BaseChangeDetector):
                 'coef': [1.0, 0.05, 0.05]
             }
         else:
-            raise ValueError(
-                f"Currently `use_mixed_loss` must be set to False for {self.__class__}"
-            )
+            return super().default_loss()
 
 
 class ChangeStar(BaseChangeDetector):
@@ -898,6 +894,4 @@ class ChangeStar(BaseChangeDetector):
                 'coef': [1.0] * 4
             }
         else:
-            raise ValueError(
-                f"Currently `use_mixed_loss` must be set to False for {self.__class__}"
-            )
+            return super().default_loss()
