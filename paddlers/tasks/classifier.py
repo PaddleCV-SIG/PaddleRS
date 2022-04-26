@@ -449,7 +449,7 @@ class BaseClassifier(BaseModel):
             if isinstance(sample['image'], str):
                 sample = ImgDecoder(to_rgb=False)(sample)
             ori_shape = sample['image'].shape[:2]
-            im = transforms(sample)[0]
+            im = transforms(sample)
             batch_im.append(im)
             batch_ori_shape.append(ori_shape)
         if to_tensor:
