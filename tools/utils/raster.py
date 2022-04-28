@@ -14,7 +14,7 @@
 
 import os.path as osp
 import numpy as np
-from typing import List, Tuple, Any, Union
+from typing import List, Tuple, Union
 from paddlers.transforms.functions import to_uint8 as raster2uint8
 
 try:
@@ -191,7 +191,7 @@ class Raster:
         return tmp
 
 
-def save_mask_geotiff(mask: np.ndarray, save_path: str, proj: Any, geotf: Any) -> None:
+def save_mask_geotiff(mask: np.ndarray, save_path: str, proj: str, geotf: Tuple) -> None:
     height, width = mask.shape
     driver = gdal.GetDriverByName("GTiff")
     dst_ds = driver.Create(save_path, width, height, 1, gdal.GDT_UInt16)
