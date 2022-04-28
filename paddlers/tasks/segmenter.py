@@ -543,13 +543,13 @@ class BaseSegmenter(BaseModel):
         elif isinstance(block_size, (tuple, list)) and len(block_size) == 2:
             block_size = tuple(block_size)
         else:
-            raise ValueError("`block_size` must be tuple or list and lenght is 2.")
+            raise ValueError("`block_size` must be a tuple/list of length 2 or a integer.")
         if isinstance(overlap, int):
             overlap = (overlap, overlap)
         elif isinstance(overlap, (tuple, list)) and len(overlap) == 2:
             overlap = tuple(overlap)
         else:
-            raise ValueError("`overlap` must be tuple or list and lenght is 2.")
+            raise ValueError("`overlap` must be a tuple/list of length 2 or a integer.")
 
         src_data = gdal.Open(img_file)
         width = src_data.RasterXSize
@@ -557,7 +557,7 @@ class BaseSegmenter(BaseModel):
         bands = src_data.RasterCount
 
         driver = gdal.GetDriverByName("GTiff")
-        file_name = osp.normpath(img_file).split(os.sep)[-1].split(".")[0] + ".tif"
+        file_name = osp.splitext(osp.normpath(img_file).split(os.sep)[-1])[0] + ".tif"
         if not osp.exists(save_dir):
             os.makedirs(save_dir)
         save_file = osp.join(save_dir, file_name)
