@@ -189,3 +189,21 @@ class Raster:
             tmp = np.zeros((block_size[0], block_size[1]), dtype=ima.dtype)
             tmp[:h, :w] = ima
         return tmp
+
+
+def save_geotiff(image: np.ndarray, save_path: str, proj: str, geotf: Tuple) -> None:
+    height, width, channel = image.shape
+    driver = gdal.GetDriverByName("GTiff")
+    dst_ds = driver.Create(save_path, width, height, channel, gdal.GDT_UInt16)
+    dst_ds.SetGeoTransform(geotf)
+    dst_ds.SetProjection(proj)
+    if channel > 1:
+        for i in range(channel):
+            band = dst_ds.GetRasterBand(i + 1)
+            band.WriteArray(image[:, :, i])
+            dst_ds.FlushCache()
+    else:
+        band = dst_ds.GetRasterBand(1)
+        band.WriteArray(image)
+        dst_ds.FlushCache()
+    dst_ds = None

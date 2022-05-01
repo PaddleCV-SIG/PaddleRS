@@ -18,7 +18,7 @@ import numpy as np
 import argparse
 from sklearn.decomposition import PCA
 from joblib import dump
-from utils import Raster, Timer
+from utils import Raster, Timer, raster2uint8, save_geotiff
 
 
 @Timer
@@ -27,12 +27,17 @@ def pca_train(img_path, save_dir="output", dim=3, to_uint8=True):
     im = raster.getArray()
     n_im = np.reshape(im, (-1, raster.bands))
     pca = PCA(n_components=dim, whiten=True)
-    im_pca = pca.fit(n_im)
+    pca_model = pca.fit(n_im)
     if not osp.exists(save_dir):
         os.makedirs(save_dir)
-    save_path = osp.join(save_dir, "pca.joblib")
-    dump(im_pca, save_path)
-    return save_path
+    name = osp.splitext(osp.normpath(img_path).split(os.sep)[-1])[0]
+    model_save_path = osp.join(save_dir, (name + "_pca.joblib"))
+    image_save_path = osp.join(save_dir, (name + "_pca.tif"))
+    dump(pca_model, model_save_path)  # save model
+    output = raster2uint8(
+        pca_model.transform(n_im).reshape((raster.height, raster.width, -1)))
+    save_geotiff(output, image_save_path, raster.proj, raster.geot)  # save tiff
+    print("The Image and model of PCA saved in {}.".format(save_dir))
 
 
 parser = argparse.ArgumentParser(description="input parameters")
@@ -48,5 +53,4 @@ parser.add_argument("--to_uint8", type=bool, default=True, \
 
 if __name__ == "__main__":
     args = parser.parse_args()
-    save_path = pca_train(args.im_path, args.save_dir, args.dim, args.to_uint8)
-    print("The model of PCA saved {}.".format(save_path))
+    pca_train(args.im_path, args.save_dir, args.dim, args.to_uint8)
