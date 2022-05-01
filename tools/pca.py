@@ -1,0 +1,52 @@
+# Copyright (c) 2022 PaddlePaddle Authors. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import os
+import os.path as osp
+import numpy as np
+import argparse
+from sklearn.decomposition import PCA
+from joblib import dump
+from utils import Raster, Timer
+
+
+@Timer
+def pca_train(img_path, save_dir="output", dim=3, to_uint8=True):
+    raster = Raster(img_path, to_uint8=to_uint8)
+    im = raster.getArray()
+    n_im = np.reshape(im, (-1, raster.bands))
+    pca = PCA(n_components=dim, whiten=True)
+    im_pca = pca.fit(n_im)
+    if not osp.exists(save_dir):
+        os.makedirs(save_dir)
+    save_path = osp.join(save_dir, "pca.joblib")
+    dump(im_pca, save_path)
+    return save_path
+
+
+parser = argparse.ArgumentParser(description="input parameters")
+parser.add_argument("--im_path", type=str, required=True, \
+                    help="The path of HSIs image.")
+parser.add_argument("--save_dir", type=str, default="output", \
+                    help="The params(*.joblib) saved folder, `output` is the default.")
+parser.add_argument("--dim", type=int, default=3, \
+                    help="The dimension after reduced, `3` is the default.")
+parser.add_argument("--to_uint8", type=bool, default=True, \
+                    help="If to uint8 or not, `True` is the default.")
+
+
+if __name__ == "__main__":
+    args = parser.parse_args()
+    save_path = pca_train(args.im_path, args.save_dir, args.dim, args.to_uint8)
+    print("The model of PCA saved {}.".format(save_path))

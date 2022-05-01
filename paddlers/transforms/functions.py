@@ -17,7 +17,6 @@ import numpy as np
 import copy
 import shapely.ops
 from shapely.geometry import Polygon, MultiPolygon, GeometryCollection
-from sklearn.decomposition import PCA
 from sklearn.linear_model import LinearRegression
 from skimage import exposure
 
@@ -426,10 +425,6 @@ def to_uint8(im, is_linear=False):
         return np.uint8(stretched_img * 255)
 
     dtype = im.dtype.name
-    dtypes = ["uint8", "uint16", "uint32", "float32"]
-    if dtype not in dtypes:
-        raise ValueError(
-            f"'dtype' must be uint8/uint16/uint32/float32, not {dtype}.")
     if dtype != "uint8":
         im = _sample_norm(im)
     if is_linear:
@@ -529,26 +524,6 @@ def de_haze(im, gamma=False):
     result = np.clip(result, 0, 1)
     if gamma:
         result = result**(np.log(0.5) / np.log(result.mean()))
-    return (result * 255).astype("uint8")
-
-
-def pca(im, dim=3, whiten=True):
-    """ Dimensionality reduction of PCA. 
-
-    Args:
-        im (np.ndarray): The image.
-        dim (int, optional): Reserved dimensions. Defaults to 3.
-        whiten (bool, optional): PCA whiten or not. Defaults to True.
-
-    Returns:
-        np.ndarray: The image after PCA.
-    """
-    H, W, C = im.shape
-    n_im = np.reshape(im, (-1, C))
-    pca = PCA(n_components=dim, whiten=whiten)
-    im_pca = pca.fit_transform(n_im)
-    result = np.reshape(im_pca, (H, W, dim))
-    result = np.clip(result, 0, 1)
     return (result * 255).astype("uint8")
 
 
