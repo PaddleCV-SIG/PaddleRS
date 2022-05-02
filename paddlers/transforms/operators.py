@@ -18,7 +18,6 @@ import random
 from numbers import Number
 from functools import partial
 from operator import methodcaller
-from joblib import load
 try:
     from collections.abc import Sequence
 except Exception:
@@ -29,6 +28,7 @@ import cv2
 import imghdr
 from PIL import Image
 import paddlers
+from joblib import load
 
 from .functions import normalize, horizontal_flip, permute, vertical_flip, center_crop, is_poly, \
     horizontal_flip_poly, horizontal_flip_rle, vertical_flip_poly, vertical_flip_rle, crop_poly, \
