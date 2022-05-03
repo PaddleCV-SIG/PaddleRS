@@ -19,9 +19,10 @@ from math import ceil
 from PIL import Image
 import numpy as np
 
+
 def GetFileNameAndExt(filename):
-    (filepath, tempfilename) = os.path.split(filename);
-    (shotname, extension) = os.path.splitext(tempfilename);
+    (filepath, tempfilename) = os.path.split(filename)
+    (shotname, extension) = os.path.splitext(tempfilename)
     return shotname, extension
 
 
@@ -37,8 +38,9 @@ def create_list(data_dir, A, B, label, txt_save_path):
                 file_list.append(file)
     with open(txt_save_path, 'w') as f:
         for i in range(len(file_list)):
-            f.write(osp.join(A, file_list[i]) + " " + osp.join(B, file_list[i]) + " " + osp.join(label,
-                                                                                                 file_list[i]) + "\r")
+            f.write(
+                osp.join(A, file_list[i]) + " " + osp.join(B, file_list[i]) +
+                " " + osp.join(label, file_list[i]) + "\r")
 
 
 parser = argparse.ArgumentParser(description="input parameters")
@@ -55,4 +57,4 @@ parser.add_argument("--save_txt", type=str, required=True, \
 
 if __name__ == "__main__":
     args = parser.parse_args()
-    create_list(args.image_folder, args.A,args.B,args.label, args.save_txt)
+    create_list(args.image_folder, args.A, args.B, args.label, args.save_txt)

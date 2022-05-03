@@ -59,6 +59,7 @@ class STANet(nn.Layer):
             Conv3x3(WIDTH, num_classes))
 
         self.init_weight()
+
     def forward(self, t1, t2):
         f1 = self.extract(t1)
         f2 = self.extract(t2)
@@ -214,7 +215,7 @@ class BAM(nn.Layer):
 
         out = F.interpolate(out, scale_factor=self.ds)
         out = out + x
-        return out.reshape(tuple(out.shape[:-1]) +tuple([out.shape[-1] // 2, 2]))
+        return out.reshape(tuple(out.shape[:-1]) + (out.shape[-1] // 2, 2))
 
 
 class PAMBlock(nn.Layer):
@@ -242,7 +243,6 @@ class PAMBlock(nn.Layer):
         # Split the whole image into subregions.
         b, c, h, w = x_rs.shape
 
-
         query = self._split_subregions(query)
         key = self._split_subregions(key)
         value = self._split_subregions(value)
@@ -250,7 +250,6 @@ class PAMBlock(nn.Layer):
         # Perform subregion-wise attention.
         out = self._attend(query, key, value)
 
-   
         # Stack subregions to reconstruct the whole image.
         out = self._recons_whole(out, b, c, h, w)
         out = F.interpolate(out, scale_factor=self.ds)
@@ -271,9 +270,8 @@ class PAMBlock(nn.Layer):
             (b, c, self.scale, h // self.scale, self.scale, w // self.scale))
 
         x = x.transpose((0, 2, 4, 1, 3, 5))
-          
-        x =x.reshape(
-            (b * self.scale * self.scale, c, -1))
+
+        x = x.reshape((b * self.scale * self.scale, c, -1))
         return x
 
     def _recons_whole(self, x, b, c, h, w):
@@ -298,7 +296,7 @@ class PAM(nn.Layer):
 
         out = self.conv_out(paddle.concat(res, axis=1))
 
-        return out.reshape(tuple(out.shape[:-1]) + tuple([out.shape[-1] // 2, 2]))
+        return out.reshape(tuple(out.shape[:-1]) + (out.shape[-1] // 2, 2))
 
 
 class Attention(nn.Layer):

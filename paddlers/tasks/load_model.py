@@ -76,8 +76,10 @@ def load_model(model_dir, **params):
     model_info['_init_params'].update({'with_net': with_net})
 
     with paddle.utils.unique_name.guard():
+        model_info_params = model_info['_init_params']["params"]
+        del model_info['_init_params']["params"]
         model = getattr(paddlers.tasks, model_info['Model'])(
-            **model_info['_init_params'])
+            **model_info['_init_params'], **model_info_params)
         if with_net:
             if status == 'Pruned' or osp.exists(
                     osp.join(model_dir, "prune.yml")):

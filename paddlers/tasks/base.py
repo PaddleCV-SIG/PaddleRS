@@ -142,8 +142,6 @@ class BaseModel:
             del self.init_params['__class__']
         if 'model_name' in self.init_params:
             del self.init_params['model_name']
-        if 'params' in self.init_params:
-            del self.init_params['params']
 
         info['_init_params'] = self.init_params
 
