@@ -18,7 +18,7 @@ import numpy as np
 import argparse
 from sklearn.decomposition import PCA
 from joblib import dump
-from utils import Raster, Timer, raster2uint8, save_geotiff
+from utils import Raster, Timer, save_geotiff
 
 
 @Timer
@@ -34,8 +34,7 @@ def pca_train(img_path, save_dir="output", dim=3, to_uint8=True):
     model_save_path = osp.join(save_dir, (name + "_pca.joblib"))
     image_save_path = osp.join(save_dir, (name + "_pca.tif"))
     dump(pca_model, model_save_path)  # save model
-    output = raster2uint8(
-        pca_model.transform(n_im).reshape((raster.height, raster.width, -1)))
+    output = pca_model.transform(n_im).reshape((raster.height, raster.width, -1))
     save_geotiff(output, image_save_path, raster.proj, raster.geot)  # save tiff
     print("The Image and model of PCA saved in {}.".format(save_dir))
 

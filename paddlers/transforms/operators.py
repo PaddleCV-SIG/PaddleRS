@@ -219,7 +219,7 @@ class Compose(Transform):
         ValueError: Invalid length of transforms.
     """
 
-    def __init__(self, transforms):
+    def __init__(self, transforms, to_uint8=True):
         super(Compose, self).__init__()
         if not isinstance(transforms, list):
             raise TypeError(
@@ -230,7 +230,7 @@ class Compose(Transform):
                 'Length of transforms must not be less than 1, but received is {}'
                 .format(len(transforms)))
         self.transforms = transforms
-        self.decode_image = ImgDecoder()
+        self.decode_image = ImgDecoder(to_uint8=to_uint8)
         self.arrange_outputs = None
         self.apply_im_only = False
 
@@ -1544,7 +1544,7 @@ class DimReducing(Transform):
         n_im = np.reshape(image, (-1, C))
         im_pca = self.pca.transform(n_im)
         result = np.reshape(im_pca, (H, W, -1))
-        result = to_uint8(result)
+        # result = to_uint8(result)
         return result
 
     def apply(self, sample):

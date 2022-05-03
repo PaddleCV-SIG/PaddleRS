@@ -193,8 +193,12 @@ class Raster:
 
 def save_geotiff(image: np.ndarray, save_path: str, proj: str, geotf: Tuple) -> None:
     height, width, channel = image.shape
+    if "float" in image.dtype:
+        tif_type = gdal.GDT_Float64
+    else:
+        tif_type = gdal.GDT_UInt16
     driver = gdal.GetDriverByName("GTiff")
-    dst_ds = driver.Create(save_path, width, height, channel, gdal.GDT_UInt16)
+    dst_ds = driver.Create(save_path, width, height, channel, tif_type)
     dst_ds.SetGeoTransform(geotf)
     dst_ds.SetProjection(proj)
     if channel > 1:
