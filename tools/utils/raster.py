@@ -109,7 +109,7 @@ class Raster:
                 Block size. Defaults to [512, 512].
 
         Returns:
-            np.ndarray: data"s ndarray.
+            np.ndarray: data's ndarray.
         """
         if self._src_data is not None:
             if start_loc is None:
