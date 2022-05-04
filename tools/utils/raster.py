@@ -23,6 +23,28 @@ except:
     import gdal
 
 
+def _get_type(type_name: str):
+    if type_name in ["bool", "uint8"]:
+        gdal_type = gdal.GDT_Byte
+    elif type_name in ["int8", "int16"]:
+        gdal_type = gdal.GDT_Int16
+    elif type_name == "uint16":
+        gdal_type = gdal.GDT_UInt16
+    elif type_name == "int32":
+        gdal_type = gdal.GDT_Int32
+    elif type_name == "uint32":
+        gdal_type = gdal.GDT_UInt32
+    elif type_name in ["int64", "uint64", "float16", "float32"]:
+        gdal_type = gdal.GDT_Float32
+    elif type_name == "float64":
+        gdal_type = gdal.GDT_Float64
+    elif type_name == "complex64":
+        gdal_type = gdal.GDT_CFloat64
+    else:
+        raise TypeError("Non-suported data type `{}`.".format(type_name))
+    return gdal_type
+
+
 class Raster:
     def __init__(self,
                  path: str,
@@ -87,7 +109,7 @@ class Raster:
                 Block size. Defaults to [512, 512].
 
         Returns:
-            np.ndarray: data's ndarray.
+            np.ndarray: data"s ndarray.
         """
         if self._src_data is not None:
             if start_loc is None:
@@ -117,12 +139,7 @@ class Raster:
                 self.bands = 1
             self.geot = None
             self.proj = None
-        if "int8" in d_name:
-            self.datatype = gdal.GDT_Byte
-        elif "int16" in d_name:
-            self.datatype = gdal.GDT_UInt16
-        else:
-            self.datatype = gdal.GDT_Float32
+        self.datatype = _get_type(d_name)
 
     def _getNumpy(self):
         ima = np.load(self.path)
@@ -193,12 +210,9 @@ class Raster:
 
 def save_geotiff(image: np.ndarray, save_path: str, proj: str, geotf: Tuple) -> None:
     height, width, channel = image.shape
-    if "float" in image.dtype:
-        tif_type = gdal.GDT_Float64
-    else:
-        tif_type = gdal.GDT_UInt16
+    data_type = _get_type(image.dtype.name)
     driver = gdal.GetDriverByName("GTiff")
-    dst_ds = driver.Create(save_path, width, height, channel, tif_type)
+    dst_ds = driver.Create(save_path, width, height, channel, data_type)
     dst_ds.SetGeoTransform(geotf)
     dst_ds.SetProjection(proj)
     if channel > 1:

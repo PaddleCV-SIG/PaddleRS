@@ -19,6 +19,7 @@ import shapely.ops
 from shapely.geometry import Polygon, MultiPolygon, GeometryCollection
 from sklearn.linear_model import LinearRegression
 from skimage import exposure
+from joblib import load
 
 
 def normalize(im, mean, std, min_value=[0, 0, 0], max_value=[255, 255, 255]):
@@ -589,3 +590,22 @@ def match_by_regression(im, ref, pif_loc=None):
         matched = _linear_regress(im, ref, pif_loc).astype(im.dtype)
 
     return matched
+
+
+def inv_pca(im, joblib_path):
+    """
+    Restore PCA result.
+
+    Args:
+        im (np.ndarray): The input image after PCA.
+        joblib_path (str): Path of *.joblib about PCA.
+
+    Returns:
+        np.ndarray: The raw input image.
+    """
+    pca = load(joblib_path)
+    H, W, C = im.shape
+    n_im = np.reshape(im, (-1, C))
+    r_im = pca.inverse_transform(n_im)
+    r_im = np.reshape(r_im, (H, W, -1))
+    return r_im

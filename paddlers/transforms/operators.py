@@ -1544,7 +1544,6 @@ class DimReducing(Transform):
         n_im = np.reshape(image, (-1, C))
         im_pca = self.pca.transform(n_im)
         result = np.reshape(im_pca, (H, W, -1))
-        # result = to_uint8(result)
         return result
 
     def apply(self, sample):

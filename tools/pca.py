@@ -22,8 +22,8 @@ from utils import Raster, Timer, save_geotiff
 
 
 @Timer
-def pca_train(img_path, save_dir="output", dim=3, to_uint8=True):
-    raster = Raster(img_path, to_uint8=to_uint8)
+def pca_train(img_path, save_dir="output", dim=3):
+    raster = Raster(img_path)
     im = raster.getArray()
     n_im = np.reshape(im, (-1, raster.bands))
     pca = PCA(n_components=dim, whiten=True)
@@ -46,10 +46,8 @@ parser.add_argument("--save_dir", type=str, default="output", \
                     help="The params(*.joblib) saved folder, `output` is the default.")
 parser.add_argument("--dim", type=int, default=3, \
                     help="The dimension after reduced, `3` is the default.")
-parser.add_argument("--to_uint8", type=bool, default=True, \
-                    help="If to uint8 or not, `True` is the default.")
 
 
 if __name__ == "__main__":
     args = parser.parse_args()
-    pca_train(args.im_path, args.save_dir, args.dim, args.to_uint8)
+    pca_train(args.im_path, args.save_dir, args.dim)
