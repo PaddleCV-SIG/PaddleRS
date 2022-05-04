@@ -23,7 +23,7 @@ except:
     import gdal
 
 
-def _get_type(type_name: str):
+def _get_type(type_name: str) -> int:
     if type_name in ["bool", "uint8"]:
         gdal_type = gdal.GDT_Byte
     elif type_name in ["int8", "int16"]:
