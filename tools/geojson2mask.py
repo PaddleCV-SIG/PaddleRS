@@ -31,8 +31,8 @@ def _gt_convert(x_geo, y_geo, geotf):
 def convert_data(image_path, geojson_path):
     raster = Raster(image_path)
     tmp_img = np.zeros((raster.height, raster.width), dtype=np.int32)
-    geo_writer = codecs.open(geojson_path, "r", encoding="utf-8")
-    feats = geojson.loads(geo_writer.read())["features"]  # 所有图像块
+    geo_reader = codecs.open(geojson_path, "r", encoding="utf-8")
+    feats = geojson.loads(geo_reader.read())["features"]  # 所有图像块
     for feat in tqdm(feats):
         geo = feat["geometry"]
         if geo["type"] == "Polygon":  # 多边形
