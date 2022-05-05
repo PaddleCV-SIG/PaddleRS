@@ -1,64 +1,50 @@
+# Copyright (c) 2022 PaddlePaddle Authors. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import os
 import os.path as osp
 import argparse
 from math import ceil
 from PIL import Image
-import numpy as np
+from utils import Raster, Timer
 
 
-def GetFileNameAndExt(filename):
-    (filepath, tempfilename) = os.path.split(filename)
-    (shotname, extension) = os.path.splitext(tempfilename)
-    return shotname, extension
-
-
+@Timer
 def split_data(image_path, block_size, save_folder):
-    img_ext = [".jpg", ".png"]
-    for root, dirs, files in os.walk(image_path):
-        for dir in dirs:
-            a = root[len(image_path) + 1:]
-            structure = os.path.join(save_folder, a, dir)
-            os.makedirs(structure, exist_ok=True)
-        for file in files:
-            shotname, extension = GetFileNameAndExt(file)
-            if extension in img_ext:
-                file_path = osp.join(root, file)
-                img_obj = Image.open(file_path)
-                img_array = np.array(img_obj, dtype=np.uint8)
-                rows = ceil(img_array.shape[0] / block_size)
-                cols = ceil(img_array.shape[1] / block_size)
-                total_number = int(rows * cols)
-                for r in range(rows):
-                    for c in range(cols):
-                        if len(img_array.shape) > 2:
-                            title = Image.fromarray(img_array[r * block_size:(
-                                r + 1) * block_size, c * block_size:(c + 1) *
-                                                              block_size, :])
-                            save_path = osp.join(
-                                root.replace(image_path, save_folder),
-                                (shotname + "_" + str(r) + "_" + str(c) + ".png"
-                                 ))
-                        else:
-                            title = Image.fromarray(img_array[r * block_size:(
-                                r + 1) * block_size, c * block_size:(c + 1) *
-                                                              block_size])
-                            save_path = osp.join(
-                                root.replace(image_path, save_folder),
-                                (shotname + "_" + str(r) + "_" + str(c) + ".png"
-                                 ))
-                        title.save(save_path, "PNG")
-                        print("-- {:d}/{:d} --".format(
-                            int(r * cols + c + 1), total_number))
+    if not osp.exists(save_folder):
+        os.makedirs(save_folder)
+    image_name = image_path.replace("\\", "/").split("/")[-1].split(".")[0]
+    raster = Raster(image_path, to_uint8=True)
+    rows = ceil(raster.height / block_size)
+    cols = ceil(raster.width / block_size)
+    total_number = int(rows * cols)
+    for r in range(rows):
+        for c in range(cols):
+            loc_start = (c * block_size, r * block_size)
+            title = Image.fromarray(
+                raster.getArray(loc_start, (block_size, block_size)))
+            save_path = osp.join(save_folder, (
+                image_name + "_" + str(r) + "_" + str(c) + ".png"))
+            title.save(save_path, "PNG")
+            print("-- {:d}/{:d} --".format(int(r * cols + c + 1), total_number))
 
 
 parser = argparse.ArgumentParser(description="input parameters")
-parser.add_argument(
-    "--image_path", type=str, required=True, help="The path of big image data.")
-parser.add_argument(
-    "--block_size",
-    type=int,
-    default=512,
-    help="The size of image block, `512` is the default.")
+parser.add_argument("--image_path", type=str, required=True, \
+                    help="The path of big image data.")
+parser.add_argument("--block_size", type=int, default=512, \
+                    help="The size of image block, `512` is the default.")
 parser.add_argument("--save_folder", type=str, default="output", \
                     help="The folder path to save the results, `output` is the default.")
 

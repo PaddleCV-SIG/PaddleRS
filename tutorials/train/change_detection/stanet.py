@@ -1,91 +1,88 @@
 #!/usr/bin/env python
+
 # 变化检测模型STANet训练示例脚本
-# 执行此脚本前，请确认已正确安装PaddleRS库,并预处理数据集
-import sys
-import paddle
-import os
-import argparse
+# 执行此脚本前，请确认已正确安装PaddleRS库
+
 import paddlers as pdrs
 from paddlers import transforms as T
-import paddle.nn as nn
-import paddle
 
-DATA_DIR = "./datasettest/"
-TRAIN_FILE_LIST_PATH = os.path.join(DATA_DIR, 'train.txt')
-EVAL_FILE_LIST_PATH = os.path.join(DATA_DIR, 'val.txt')
-TESTLE_LIST_PATH = os.path.join(DATA_DIR, 'test.txt')
-EXP_DIR = "./output1/stanet/"
-LR = 0.001
-DECAY_STEP = 5000
-NUM_EPOCHS = 100
-# 每多少个epoch保存一次模型权重参数
-SAVE_INTERVAL_EPOCHS = 3
-#训练阶段 batch size
-TRAIN_BATCH_SIZE = 4
+# 数据集存放目录
+DATA_DIR = './data/airchange/'
+# 训练集`file_list`文件路径
+TRAIN_FILE_LIST_PATH = './data/airchange/train.txt'
+# 验证集`file_list`文件路径
+EVAL_FILE_LIST_PATH = './data/airchange/eval.txt'
+# 实验目录，保存输出的模型权重和结果
+EXP_DIR = './output/stanet/'
 
-# 定义训练和验证时的transforms
-# API说明：https://github.com/PaddlePaddle/paddlers/blob/develop/docs/apis/transforms/transforms.md
+# 下载和解压AirChange数据集
+airchange_dataset = 'http://mplab.sztaki.hu/~bcsaba/test/SZTAKI_AirChange_Benchmark.zip'
+pdrs.utils.download_and_decompress(airchange_dataset, path=DATA_DIR)
+
+# 定义训练和验证时使用的数据变换（数据增强、预处理等）
+# 使用Compose组合多种变换方式。Compose中包含的变换将按顺序串行执行
+# API说明：https://github.com/PaddleCV-SIG/PaddleRS/blob/develop/docs/apis/transforms.md
 train_transforms = T.Compose([
-    T.Resize(target_size=256),
-    T.RandomHorizontalFlip(),
-    T.Normalize(
-        mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),
-])
-eval_transforms = T.Compose([
-    T.Resize(target_size=256),
+    # 随机裁剪
+    T.RandomCrop(
+        # 裁剪区域将被缩放到256x256
+        crop_size=256,
+        # 裁剪区域的横纵比在0.5-2之间变动
+        aspect_ratio=[0.5, 2.0],
+        # 裁剪区域相对原始影像长宽比例在一定范围内变动，最小不低于原始长宽的1/5
+        scaling=[0.2, 1.0]),
+    # 以50%的概率实施随机水平翻转
+    T.RandomHorizontalFlip(prob=0.5),
+    # 将数据归一化到[-1,1]
     T.Normalize(
         mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),
 ])
 
-# 定义训练和验证所用的数据集
-# API说明：https://github.com/PaddlePaddle/paddlers/blob/develop/docs/apis/datasets.md
+eval_transforms = T.Compose([
+    # 验证阶段与训练阶段的数据归一化方式必须相同
+    T.Normalize(
+        mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]),
+])
+
+# 分别构建训练和验证所用的数据集
 train_dataset = pdrs.datasets.CDDataset(
-    data_dir=DATA_DIR + '/train',
+    data_dir=DATA_DIR,
     file_list=TRAIN_FILE_LIST_PATH,
     label_list=None,
     transforms=train_transforms,
     num_workers=0,
-    binarize_labels=True,
     shuffle=True,
-    with_seg_labels=False, )
+    with_seg_labels=False,
+    binarize_labels=True)
+
 eval_dataset = pdrs.datasets.CDDataset(
-    data_dir=DATA_DIR + '/val',
+    data_dir=DATA_DIR,
     file_list=EVAL_FILE_LIST_PATH,
     label_list=None,
     transforms=eval_transforms,
     num_workers=0,
-    binarize_labels=True,
+    shuffle=False,
     with_seg_labels=False,
-    shuffle=False)
-# 初始化模型，并进行训练
-# 可使用VisualDL查看训练指标，参考https://github.com/PaddlePaddle/paddlers/blob/develop/docs/visualdl.md
-num_classes = 2
-model = pdrs.tasks.STANet(
-    in_channels=3, num_classes=num_classes, att_type='PAM', ds_factor=1)
-# 制定定步长学习率衰减策略
-lr_scheduler = paddle.optimizer.lr.StepDecay(
-    LR,
-    step_size=DECAY_STEP,
-    # 学习率衰减系数，这里指定每次减半
-    gamma=0.5)
+    binarize_labels=True)
 
-# 构造Adam优化器
-optimizer = paddle.optimizer.AdamW(
-    learning_rate=lr_scheduler, parameters=model.net.parameters())
+# 使用默认参数构建STANet模型
+# 目前已支持的模型请参考：https://github.com/PaddleCV-SIG/PaddleRS/blob/develop/docs/apis/model_zoo.md
+# 模型输入参数请参考：https://github.com/PaddleCV-SIG/PaddleRS/blob/develop/paddlers/tasks/change_detector.py
+model = pdrs.tasks.STANet()
+
+# 执行模型训练
 model.train(
-    num_epochs=NUM_EPOCHS,
+    num_epochs=5,
     train_dataset=train_dataset,
+    train_batch_size=4,
     eval_dataset=eval_dataset,
-    train_batch_size=TRAIN_BATCH_SIZE,
-    optimizer=optimizer,
-    save_interval_epochs=SAVE_INTERVAL_EPOCHS,
+    save_interval_epochs=3,
     # 每多少次迭代记录一次日志
-    log_interval_steps=20,
+    log_interval_steps=50,
+    save_dir=EXP_DIR,
     # 是否使用early stopping策略，当精度不再改善时提前终止训练
     early_stop=False,
     # 是否启用VisualDL日志功能
     use_vdl=True,
-    # pretrain_weights=None,
-    save_dir=EXP_DIR,
     # 指定从某个检查点继续训练
     resume_checkpoint=None)
