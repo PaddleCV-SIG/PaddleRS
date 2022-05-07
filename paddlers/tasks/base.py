@@ -18,7 +18,8 @@ import time
 import copy
 import math
 import json
-from functools import partial
+from functools import partial, wraps
+from inspect import signature
 
 import yaml
 import paddle
@@ -38,7 +39,30 @@ from .slim.prune import _pruner_eval_fn, _pruner_template_input, sensitive_prune
 from .utils.infer_nets import InferNet, InferCDNet
 
 
-class BaseModel:
+class ModelMeta(type):
+    def __new__(cls, name, bases, attrs):
+        def _deco(init_func):
+            @wraps(init_func)
+            def _wrapper(self, *args, **kwargs):
+                if hasattr(self, '_raw_params'):
+                    ret = init_func(self, *args, **kwargs)
+                else:
+                    sig = signature(init_func)
+                    bnd_args = sig.bind(self, *args, **kwargs)
+                    raw_params = bnd_args.arguments
+                    raw_params.pop('self')
+                    self._raw_params = raw_params
+                    ret = init_func(self, *args, **kwargs)
+                return ret
+
+            return _wrapper
+
+        old_init_func = attrs['__init__']
+        attrs['__init__'] = _deco(old_init_func)
+        return type.__new__(cls, name, bases, attrs)
+
+
+class BaseModel(metaclass=ModelMeta):
     def __init__(self, model_type):
         self.model_type = model_type
         self.in_channels = None
@@ -128,7 +152,7 @@ class BaseModel:
                 model_name=self.model_name,
                 checkpoint=resume_checkpoint)
 
-    def get_model_info(self, drop_params=True, inplace=True):
+    def get_model_info(self, get_raw_params=False, inplace=True):
         if inplace:
             init_params = self.init_params
         else:
@@ -148,11 +172,13 @@ class BaseModel:
             del init_params['__class__']
         if 'model_name' in init_params:
             del init_params['model_name']
-        if drop_params:
-            if 'params' in init_params:
-                del init_params['params']
+        if 'params' in init_params:
+            del init_params['params']
 
         info['_init_params'] = init_params
+
+        if get_raw_params:
+            info['raw_params'] = self._raw_params
 
         try:
             primary_metric_key = list(self.eval_metrics.keys())[0]
@@ -196,7 +222,7 @@ class BaseModel:
             if osp.exists(save_dir):
                 os.remove(save_dir)
             os.makedirs(save_dir)
-        model_info = self.get_model_info(drop_params=False)
+        model_info = self.get_model_info(get_raw_params=True)
         model_info['status'] = self.status
 
         paddle.save(self.net.state_dict(), osp.join(save_dir, 'model.pdparams'))

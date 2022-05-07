@@ -80,9 +80,9 @@ def load_model(model_dir, **params):
     model_info['_init_params'].update({'with_net': with_net})
 
     with paddle.utils.unique_name.guard():
-        params = model_info['_init_params'].pop('params', {})
-        model = getattr(paddlers.tasks, model_info['Model'])(
-            **model_info['_init_params'], **params)
+        params = model_info.pop('raw_params', {})
+        params.update(model_info['_init_params'])
+        model = getattr(paddlers.tasks, model_info['Model'])(**params)
         if with_net:
             if status == 'Pruned' or osp.exists(
                     osp.join(model_dir, "prune.yml")):
@@ -120,11 +120,12 @@ def load_model(model_dir, **params):
                     net_state_dict = load_rcnn_inference_model(model_dir)
                 else:
                     net_state_dict = paddle.load(osp.join(model_dir, 'model'))
-                    if model.model_type in ['classifier', 'segmenter'
-                                            ] and 'rc' in version:
-                        # When exporting a classifier and segmenter,
-                        # InferNet is defined to append softmax and argmax operators to the model,
-                        # so parameter name starts with 'net.'
+                    if model.model_type in [
+                            'classifier', 'segmenter', 'changedetector'
+                    ]:
+                        # When exporting a classifier, segmenter, or changedetector,
+                        # InferNet (or InferCDNet) is defined to append softmax and argmax operators to the model,
+                        # so the parameter names all start with 'net.'
                         new_net_state_dict = {}
                         for k, v in net_state_dict.items():
                             new_net_state_dict['net.' + k] = v
