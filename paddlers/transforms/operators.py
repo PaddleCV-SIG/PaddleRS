@@ -608,12 +608,16 @@ class RandomFlipOrRotation(Transform):
             mode_p = random.random()
             mode_id = self.judge_probs_range(mode_p, self.probsf)
             sample['image'] = self.apply_im(sample['image'], mode_id, True)
+            if 'image2' in sample:
+                sample['image2'] = self.apply_im(sample['image2'], mode_id, True)
             if 'mask' in sample:
                 sample['mask'] = self.apply_mask(sample['mask'], mode_id, True)
         elif p_m < self.probs[1]:
             mode_p = random.random()
             mode_id = self.judge_probs_range(mode_p, self.probsr)
             sample['image'] = self.apply_im(sample['image'], mode_id, False)
+            if 'image2' in sample:
+                sample['image2'] = self.apply_im(sample['image2'], mode_id, False)
             if 'mask' in sample:
                 sample['mask'] = self.apply_mask(sample['mask'], mode_id, False)
         return sample
