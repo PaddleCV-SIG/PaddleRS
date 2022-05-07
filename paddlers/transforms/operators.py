@@ -767,12 +767,12 @@ class Normalize(Transform):
 
         from functools import reduce
         if reduce(lambda x, y: x * y, std) == 0:
-            raise ValueError('Std should not have 0, but received is {}'.format(
-                std))
+            raise ValueError(
+                'Std should not contain 0, but received is {}.'.format(std))
         if reduce(lambda x, y: x * y,
                   [a - b for a, b in zip(max_val, min_val)]) == 0:
             raise ValueError(
-                '(max_val - min_val) should not have 0, but received is {}'.
+                '(max_val - min_val) should not contain 0, but received is {}.'.
                 format((np.asarray(max_val) - np.asarray(min_val)).tolist()))
 
         self.mean = mean
