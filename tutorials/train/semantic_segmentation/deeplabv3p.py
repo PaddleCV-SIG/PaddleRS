@@ -79,7 +79,7 @@ model.train(
     eval_dataset=eval_dataset,
     save_interval_epochs=5,
     # 每多少次迭代记录一次日志
-    log_interval_steps=50,
+    log_interval_steps=4,
     save_dir=EXP_DIR,
     # 初始学习率大小
     learning_rate=0.01,
