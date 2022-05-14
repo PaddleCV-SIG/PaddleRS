@@ -779,7 +779,6 @@ class Normalize(Transform):
         self.std = std
         self.min_val = min_val
         self.max_val = max_val
-        self.is_scale = is_scale
 
     def apply_im(self, image):
         image = image.astype(np.float32)
