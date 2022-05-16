@@ -14,11 +14,13 @@
 
 import math
 import os.path as osp
-import numpy as np
 from collections import OrderedDict
+
+import numpy as np
 import paddle
 import paddle.nn.functional as F
 from paddle.static import InputSpec
+
 import paddlers.models.ppcls as paddleclas
 import paddlers.custom_models.cls as cmcls
 import paddlers
@@ -361,7 +363,7 @@ class BaseClassifier(BaseModel):
             batch_size_each_card = 1
             batch_size = batch_size_each_card * paddlers.env_info['num']
             logging.warning(
-                "Segmenter only supports batch_size=1 for each gpu/cpu card " \
+                "Classifier only supports batch_size=1 for each gpu/cpu card " \
                 "during evaluation, so batch_size " \
                 "is forcibly set to {}.".format(batch_size))
         self.eval_data_loader = self.build_data_loader(

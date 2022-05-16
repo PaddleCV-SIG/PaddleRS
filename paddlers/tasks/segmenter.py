@@ -14,12 +14,14 @@
 
 import math
 import os.path as osp
+from collections import OrderedDict
+
 import numpy as np
 import cv2
-from collections import OrderedDict
 import paddle
 import paddle.nn.functional as F
 from paddle.static import InputSpec
+
 import paddlers.models.ppseg as paddleseg
 import paddlers.custom_models.seg as cmseg
 import paddlers
@@ -524,7 +526,7 @@ class BaseSegmenter(BaseModel):
         for im in images:
             sample = {'image': im}
             if isinstance(sample['image'], str):
-                sample = ImgDecode(to_rgb=False)(sample)
+                sample = ImgDecoder(to_rgb=False)(sample)
             ori_shape = sample['image'].shape[:2]
             im = transforms(sample)[0]
             batch_im.append(im)

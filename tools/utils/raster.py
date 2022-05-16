@@ -13,8 +13,10 @@
 # limitations under the License.
 
 import os.path as osp
-import numpy as np
 from typing import List, Tuple, Union
+
+import numpy as np
+
 from paddlers.transforms.functions import to_uint8 as raster2uint8
 
 try:
@@ -64,6 +66,7 @@ class Raster:
             band_list (Union[List[int], Tuple[int], None]): 
                 band list (start with 1) or None (all of bands).
         """
+        self.bands = self._src_data.RasterCount
         if band_list is not None:
             if len(band_list) > self.bands:
                 raise ValueError(
@@ -100,7 +103,6 @@ class Raster:
 
     def _getInfo(self) -> None:
         if self._src_data is not None:
-            self.bands = self._src_data.RasterCount
             self.width = self._src_data.RasterXSize
             self.height = self._src_data.RasterYSize
             self.geot = self._src_data.GetGeoTransform()
@@ -134,7 +136,7 @@ class Raster:
             ima = np.stack(band_array, axis=0)
         return ima
 
-    def _getAarray(
+    def _getArray(
             self,
             window: Union[None, List[int], Tuple[int]]=None) -> np.ndarray:
         if window is not None:
@@ -158,6 +160,7 @@ class Raster:
             # the type is complex means this is a SAR data
             if isinstance(type(ima[0, 0]), complex):
                 ima = abs(ima)
+            ima = ima.squeeze()
         else:
             ima = ima.transpose((1, 2, 0))
         if self.to_uint8 is True:

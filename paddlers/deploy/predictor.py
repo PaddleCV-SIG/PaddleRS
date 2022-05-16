@@ -18,6 +18,7 @@ import numpy as np
 from paddle.inference import Config
 from paddle.inference import create_predictor
 from paddle.inference import PrecisionType
+
 from paddlers.tasks import load_model
 from paddlers.utils import logging, Timer
 
@@ -238,13 +239,13 @@ class Predictor(object):
                 repeats=1):
         """ 图片预测
             Args:
-                img_file(List[np.ndarray or str], str or np.ndarray):
+                img_file(List[str or tuple or np.ndarray], str, tuple, or np.ndarray):
                     对于场景分类、图像复原、目标检测和语义分割任务来说，该参数可为单一图像路径，或是解码后的、排列格式为（H, W, C）
                     且具有float32类型的BGR图像（表示为numpy的ndarray形式），或者是一组图像路径或np.ndarray对象构成的列表；对于变化检测
                     任务来说，该参数可以为图像路径二元组（分别表示前后两个时相影像路径），或是两幅图像组成的二元组，或者是上述两种二元组
                     之一构成的列表。
                 topk(int): 场景分类模型预测时使用，表示预测前topk的结果。默认值为1。
-                transforms (paddlex.transforms): 数据预处理操作。默认值为None, 即使用`model.yml`中保存的数据预处理操作。
+                transforms (paddlers.transforms): 数据预处理操作。默认值为None, 即使用`model.yml`中保存的数据预处理操作。
                 warmup_iters (int): 预热轮数，用于评估模型推理以及前后处理速度。若大于1，会预先重复预测warmup_iters，而后才开始正式的预测及其速度评估。默认为0。
                 repeats (int): 重复次数，用于评估模型推理以及前后处理速度。若大于1，会预测repeats次取时间平均值。默认值为1。
         """
