@@ -615,7 +615,7 @@ class BaseChangeDetector(BaseModel):
                 im2_fill = im1_fill.copy()
                 im1_fill[:h, :w, :] = im1
                 im2_fill[:h, :w, :] = im2
-                im_fill = [im1_fill, im2_fill]
+                im_fill = (im1_fill, im2_fill)
                 # predict
                 pred = self.predict(im_fill, transforms)["label_map"].astype("uint8")
                 # overlap
