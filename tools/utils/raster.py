@@ -94,7 +94,7 @@ class Raster:
         """
         if self._src_data is not None:
             if start_loc is None:
-                return self._getAarray()
+                return self._getArray()
             else:
                 return self._getBlock(start_loc, block_size)
         else:
@@ -157,10 +157,11 @@ class Raster:
                 band_array.append(band_i)
             ima = np.stack(band_array, axis=0)
         if self.bands == 1:
+            if len(ima.shape) == 3:
+                ima = ima.squeeze(0)
             # the type is complex means this is a SAR data
             if isinstance(type(ima[0, 0]), complex):
                 ima = abs(ima)
-            ima = ima.squeeze()
         else:
             ima = ima.transpose((1, 2, 0))
         if self.to_uint8 is True:
@@ -182,7 +183,7 @@ class Raster:
             xsize = self.width - xoff
         if yoff + ysize > self.height:
             ysize = self.height - yoff
-        ima = self._getAarray([int(xoff), int(yoff), int(xsize), int(ysize)])
+        ima = self._getArray([int(xoff), int(yoff), int(xsize), int(ysize)])
         h, w = ima.shape[:2] if len(ima.shape) == 3 else ima.shape
         if self.bands != 1:
             tmp = np.zeros(
