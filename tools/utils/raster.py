@@ -25,28 +25,6 @@ except:
     import gdal
 
 
-def _get_type(type_name: str) -> int:
-    if type_name in ["bool", "uint8"]:
-        gdal_type = gdal.GDT_Byte
-    elif type_name in ["int8", "int16"]:
-        gdal_type = gdal.GDT_Int16
-    elif type_name == "uint16":
-        gdal_type = gdal.GDT_UInt16
-    elif type_name == "int32":
-        gdal_type = gdal.GDT_Int32
-    elif type_name == "uint32":
-        gdal_type = gdal.GDT_UInt32
-    elif type_name in ["int64", "uint64", "float16", "float32"]:
-        gdal_type = gdal.GDT_Float32
-    elif type_name == "float64":
-        gdal_type = gdal.GDT_Float64
-    elif type_name == "complex64":
-        gdal_type = gdal.GDT_CFloat64
-    else:
-        raise TypeError("Non-suported data type `{}`.".format(type_name))
-    return gdal_type
-
-
 class Raster:
     def __init__(self,
                  path: str,
@@ -116,7 +94,7 @@ class Raster:
         """
         if self._src_data is not None:
             if start_loc is None:
-                return self._getAarray()
+                return self._getArray()
             else:
                 return self._getBlock(start_loc, block_size)
         else:
@@ -141,7 +119,12 @@ class Raster:
                 self.bands = 1
             self.geot = None
             self.proj = None
-        self.datatype = _get_type(d_name)
+        if "int8" in d_name:
+            self.datatype = gdal.GDT_Byte
+        elif "int16" in d_name:
+            self.datatype = gdal.GDT_UInt16
+        else:
+            self.datatype = gdal.GDT_Float32
 
     def _getNumpy(self):
         ima = np.load(self.path)
@@ -174,10 +157,11 @@ class Raster:
                 band_array.append(band_i)
             ima = np.stack(band_array, axis=0)
         if self.bands == 1:
+            if len(ima.shape) == 3:
+                ima = ima.squeeze(0)
             # the type is complex means this is a SAR data
             if isinstance(type(ima[0, 0]), complex):
                 ima = abs(ima)
-            ima = ima.squeeze()
         else:
             ima = ima.transpose((1, 2, 0))
         if self.to_uint8 is True:
@@ -199,7 +183,7 @@ class Raster:
             xsize = self.width - xoff
         if yoff + ysize > self.height:
             ysize = self.height - yoff
-        ima = self._getAarray([int(xoff), int(yoff), int(xsize), int(ysize)])
+        ima = self._getArray([int(xoff), int(yoff), int(xsize), int(ysize)])
         h, w = ima.shape[:2] if len(ima.shape) == 3 else ima.shape
         if self.bands != 1:
             tmp = np.zeros(
@@ -211,20 +195,13 @@ class Raster:
         return tmp
 
 
-def save_geotiff(image: np.ndarray, save_path: str, proj: str, geotf: Tuple) -> None:
-    height, width, channel = image.shape
-    data_type = _get_type(image.dtype.name)
+def save_mask_geotiff(mask: np.ndarray, save_path: str, proj: str, geotf: Tuple) -> None:
+    height, width = mask.shape
     driver = gdal.GetDriverByName("GTiff")
-    dst_ds = driver.Create(save_path, width, height, channel, data_type)
+    dst_ds = driver.Create(save_path, width, height, 1, gdal.GDT_UInt16)
     dst_ds.SetGeoTransform(geotf)
     dst_ds.SetProjection(proj)
-    if channel > 1:
-        for i in range(channel):
-            band = dst_ds.GetRasterBand(i + 1)
-            band.WriteArray(image[:, :, i])
-            dst_ds.FlushCache()
-    else:
-        band = dst_ds.GetRasterBand(1)
-        band.WriteArray(image)
-        dst_ds.FlushCache()
+    band = dst_ds.GetRasterBand(1)
+    band.WriteArray(mask)
+    dst_ds.FlushCache()
     dst_ds = None
