@@ -137,7 +137,9 @@ def mean_iou(intersect_area, pred_area, label_area):
 
 def fwiou(intersect_area, pred_area, label_area):
     """
-    Calculate iou.
+    Calculate Frequency Weighted Intersection over Union.
+    miou takes same weight of each class iou;
+    fwiou takes pixel frequency of each class as the weight of each class iou,
 
     Args:
         intersect_area (Tensor): The intersection area of prediction and ground truth on all classes.
