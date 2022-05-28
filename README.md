@@ -15,7 +15,7 @@
 
 ## 最新动态 <img src="docs/images/seg_news_icon.png" width="30"/>
 
-*  PaddleRS 即将发布alpha版本！欢迎大家试用
+*  [2022-05-19] 🔥 PaddleRS发布1.0-beta版本，全面支持遥感领域深度学习任务。详细发版信息请参考[Release Note](https://github.com/PaddleCV-SIG/PaddleRS/releases)。
 
 ## 简介
 
@@ -55,21 +55,21 @@ PaddleRS是遥感科研院所、相关高校共同基于飞桨开发的遥感处
       <td>
         <b>场景分类</b><br>
         <ul>
-          <li>ResNet</li>
-          <li>MobileNet</li>
+          <li>ResNet50-vd</li>
+          <li>MobileNetV3</li>
           <li>HRNet</li>
         </ul>
         <b>语义分割</b><br>
         <ul>
           <li>UNet</li>
           <li>FarSeg</li>
-          <li>DeepLabV3P</li>
+          <li>DeepLab V3+</li>
         </ul>
         <b>目标检测</b><br>
         <ul>
           <li>PP-YOLO</li>
-          <li>Faster RCNN</li>
-          <li>PicoDet</li>
+          <li>Faster R-CNN</li>
+          <li>YOLOv3</li>
         </ul>
         <b>超分/去噪</b><br>
         <ul>
@@ -81,7 +81,7 @@ PaddleRS是遥感科研院所、相关高校共同基于飞桨开发的遥感处
         <ul>
           <li>DSIFN</li>
           <li>STANet</li>
-          <li>UNetSiamDiff</li>
+          <li>FC-Siam-diff</li>
         </ul>
       </td>
       <td>
@@ -204,7 +204,8 @@ PaddleRS是遥感科研院所、相关高校共同基于飞桨开发的遥感处
 
 ## 开源贡献 <img src="./docs/images/love.png" width="30"/>
 
-非常感谢国家对地观测科学数据中心、中国科学院空天信息创新研究院、北京航空航天大学、武汉大学、中国石油大学（华东）、中国地质大学、中国四维、航天宏图、中科星图、超图等单位对PaddleRS项目的贡献。注：排名不分先后。
+* 非常感谢国家对地观测科学数据中心、中国科学院空天信息创新研究院、北京航空航天大学、武汉大学、中国石油大学（华东）、中国地质大学、中国四维、航天宏图、中科星图、超图等单位对PaddleRS项目的贡献。注：排名不分先后。
+* 非常感谢[geoyee](https://github.com/geoyee)(陈奕州), [Bobholamovic](https://github.com/Bobholamovic)(林漫晖), [kongdebug](https://github.com/kongdebug)(孔远杭), [huilin16](https://github.com/huilin16)(赵慧琳)等开发者对PaddleRS项目的贡献。
 
 ## 许可证书
 
