@@ -30,15 +30,18 @@ class BaseDataset(Dataset):
         self.num_workers = get_num_workers(num_workers)
         self.shuffle = shuffle
 
+    def __new__(cls, *unused_args, **unused_kwargs):
+        # Do a late binding
         def _add_arrange_check(method):
             @wraps(method)
-            def _wrapper(*args, **kwargs):
-                if self.transforms.has_arrange:
+            def _wrapper(self, *args, **kwargs):
+                if not self.transforms.has_arrange:
                     raise RuntimeError(
                         "The output of transform operators has not been arranged."
                     )
-                return method()
+                return method(self, *args, **kwargs)
 
             return _wrapper
 
-        self.__getitem__ = _add_arrange_check(self.__getitem__)
+        cls.__getitem__ = _add_arrange_check(cls.__getitem__)
+        return super().__new__(cls)
