@@ -129,15 +129,7 @@ class CDDataset(BaseDataset):
         sample = copy.deepcopy(self.file_list[idx])
         outputs = self.transforms(sample)
         if self.binarize_labels:
-            # FIXME: This should not depend on the details about how arrange_outputs is done.
-            if self.transforms.has_arrange:
-                outputs = outputs[:2] + tuple(map(self._binarize, outputs[2:]))
-            else:
-                for key in outputs.keys():
-                    if key == 'mask':
-                        outputs[key] = self._binarize(outputs[key])
-                    elif key == 'aux_masks':
-                        outputs[key] = list(map(self._binarize, outputs[key]))
+            outputs = outputs[:2] + tuple(map(self._binarize, outputs[2:]))
         return outputs
 
     def __len__(self):
