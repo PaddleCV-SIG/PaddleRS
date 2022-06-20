@@ -12,24 +12,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import inspect
+from contextlib import contextmanager
+from functools import wraps
+
 from .operators import *
 from .batch_operators import BatchRandomResize, BatchRandomResizeByShort, _BatchPadding
 from paddlers import transforms as T
 
 
-def arrange_transforms(model_type, transforms, mode='train'):
-    # 给transforms添加arrange操作
+def _get_arrange_transform(model_type, mode):
+    apply_im_only = None
     if model_type == 'segmenter':
         if mode == 'eval':
-            transforms.apply_im_only = True
+            apply_im_only = True
         else:
-            transforms.apply_im_only = False
+            apply_im_only = False
         arrange_transform = ArrangeSegmenter(mode)
     elif model_type == 'changedetector':
         if mode == 'eval':
-            transforms.apply_im_only = True
+            apply_im_only = True
         else:
-            transforms.apply_im_only = False
+            apply_im_only = False
         arrange_transform = ArrangeChangeDetector(mode)
     elif model_type == 'classifier':
         arrange_transform = ArrangeClassifier(mode)
@@ -37,7 +41,47 @@ def arrange_transforms(model_type, transforms, mode='train'):
         arrange_transform = ArrangeDetector(mode)
     else:
         raise Exception("Unrecognized model type: {}".format(model_type))
+    return arrange_transform, apply_im_only
+
+
+def arrange_transforms(model_type, transforms, mode='train'):
+    # 给transforms添加arrange操作
+    transform, apply_im_only = _get_arrange_transform(model_type, mode)
     transforms.arrange_outputs = arrange_transform
+    if apply_im_only is not None:
+        transforms.apply_im_only = apply_im_only
+
+
+@contextmanager
+def arrange_transforms_ctx(model_type, transforms, mode='train'):
+    old_arrange_transform = transforms.arrange_outputs
+    old_apply_im_only = transforms.apply_im_only
+    try:
+        transforms.arrange_outputs = arrange_transform
+        if apply_im_only is not None:
+            transforms.apply_im_only = apply_im_only
+        yield transforms
+    finally:
+        transforms.arrange_outputs = old_arrange_transform
+        transforms.apply_im_only = old_apply_im_only
+
+
+def arrange_transforms_deco(param_name, model_type='auto', mode='train'):
+    def _deco(func):
+        @wraps(func)
+        def _wrapper(self, *args, **kwargs):
+            if model_type == 'auto':
+                model_type = self.model_type
+            call_args = inspect.getcallargs(func, self, *args, **kwargs)
+            arg = call_args[param_name]
+            if not isinstance(arg, T.Compose):
+                arg = arg.transforms
+            with arrange_transforms_ctx(model_type, arg, mode):
+                return func(self, *args, **kwargs)
+
+        return _wrapper
+
+    return _deco
 
 
 def build_transforms(transforms_info):

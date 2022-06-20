@@ -30,7 +30,7 @@ from paddleslim import L1NormFilterPruner, FPGMFilterPruner
 
 import paddlers
 import paddlers.utils.logging as logging
-from paddlers.transforms import arrange_transforms
+from paddlers.transforms import arrange_transforms_deco
 from paddlers.utils import (seconds_to_hms, get_single_card_bs, dict2str,
                             get_pretrain_weights, load_pretrain_weights,
                             load_checkpoint, SmoothedValue, TrainingStats,
@@ -290,6 +290,7 @@ class BaseModel(metaclass=ModelMeta):
 
         return loader
 
+    @arrange_transforms_deco('train_dataset', mode='train')
     def train_loop(self,
                    num_epochs,
                    train_dataset,
@@ -302,11 +303,6 @@ class BaseModel(metaclass=ModelMeta):
                    early_stop=False,
                    early_stop_patience=5,
                    use_vdl=True):
-        arrange_transforms(
-            model_type=self.model_type,
-            transforms=train_dataset.transforms,
-            mode='train')
-
         if "RCNN" in self.__class__.__name__ and train_dataset.pos_num < len(
                 train_dataset.file_list):
             nranks = 1
@@ -465,6 +461,7 @@ class BaseModel(metaclass=ModelMeta):
             if ema is not None:
                 self.net.set_state_dict(weight)
 
+    @arrange_transforms_deco('dataset', mode='eval')
     def analyze_sensitivity(self,
                             dataset,
                             batch_size=8,
@@ -483,10 +480,6 @@ class BaseModel(metaclass=ModelMeta):
 
         assert criterion in {'l1_norm', 'fpgm'}, \
             "Pruning criterion {} is not supported. Please choose from ['l1_norm', 'fpgm']"
-        arrange_transforms(
-            model_type=self.model_type,
-            transforms=dataset.transforms,
-            mode='eval')
         if self.model_type == 'detector':
             self.net.eval()
         else:

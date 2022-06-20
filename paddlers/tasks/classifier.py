@@ -24,7 +24,7 @@ from paddle.static import InputSpec
 import paddlers.models.ppcls as paddleclas
 import paddlers.custom_models.cls as cmcls
 import paddlers
-from paddlers.transforms import arrange_transforms
+from paddlers.transforms import arrange_transforms_deco
 from paddlers.utils import get_single_card_bs, DisablePrint
 import paddlers.utils.logging as logging
 from .base import BaseModel
@@ -330,6 +330,7 @@ class BaseClassifier(BaseModel):
             use_vdl=use_vdl,
             resume_checkpoint=resume_checkpoint)
 
+    @arrange_transforms_deco('eval_dataset', mode='eval')
     def evaluate(self, eval_dataset, batch_size=1, return_details=False):
         """
         Evaluate the model.
@@ -344,11 +345,6 @@ class BaseClassifier(BaseModel):
                  "top5": `acc of top5`}.
 
         """
-        arrange_transforms(
-            model_type=self.model_type,
-            transforms=eval_dataset.transforms,
-            mode='eval')
-
         self.net.eval()
         nranks = paddle.distributed.get_world_size()
         local_rank = paddle.distributed.get_rank()
@@ -448,9 +444,8 @@ class BaseClassifier(BaseModel):
             }
         return prediction
 
+    @arrange_transforms_deco('transforms', mode='test')
     def _preprocess(self, images, transforms, to_tensor=True):
-        arrange_transforms(
-            model_type=self.model_type, transforms=transforms, mode='test')
         batch_im = list()
         batch_ori_shape = list()
         for im in images:

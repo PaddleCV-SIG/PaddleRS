@@ -57,10 +57,6 @@ __all__ = [
     "Defogging",
     "DimReducing",
     "BandSelecting",
-    "ArrangeSegmenter",
-    "ArrangeChangeDetector",
-    "ArrangeClassifier",
-    "ArrangeDetector",
     "RandomFlipOrRotation",
 ]
 
@@ -275,7 +271,7 @@ class Compose(Transform):
                 continue
             sample = op(sample)
 
-        if self.arrange_outputs is not None:
+        if self.has_arrange:
             if self.apply_im_only:
                 sample['mask'] = mask_backup
                 if 'aux_masks' in locals():
@@ -283,6 +279,10 @@ class Compose(Transform):
             sample = self.arrange_outputs(sample)
 
         return sample
+
+    @property
+    def has_arrange(self):
+        return self.arrange_outputs is not None
 
 
 class Resize(Transform):

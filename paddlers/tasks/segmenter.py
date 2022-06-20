@@ -26,7 +26,7 @@ from paddle.static import InputSpec
 import paddlers.models.ppseg as paddleseg
 import paddlers.custom_models.seg as cmseg
 import paddlers
-from paddlers.transforms import arrange_transforms
+from paddlers.transforms import arrange_transforms_deco
 from paddlers.utils import get_single_card_bs, DisablePrint
 import paddlers.utils.logging as logging
 from .base import BaseModel
@@ -362,6 +362,7 @@ class BaseSegmenter(BaseModel):
             use_vdl=use_vdl,
             resume_checkpoint=resume_checkpoint)
 
+    @arrange_transforms_deco('eval_dataset', mode='eval')
     def evaluate(self, eval_dataset, batch_size=1, return_details=False):
         """
         Evaluate the model.
@@ -380,11 +381,6 @@ class BaseSegmenter(BaseModel):
                  "category_F1-score": `F1 score`}.
 
         """
-        arrange_transforms(
-            model_type=self.model_type,
-            transforms=eval_dataset.transforms,
-            mode='eval')
-
         self.net.eval()
         nranks = paddle.distributed.get_world_size()
         local_rank = paddle.distributed.get_rank()
@@ -519,7 +515,12 @@ class BaseSegmenter(BaseModel):
             }
         return prediction
 
-    def slider_predict(self, img_file, save_dir, block_size, overlap=36, transforms=None):
+    def slider_predict(self,
+                       img_file,
+                       save_dir,
+                       block_size,
+                       overlap=36,
+                       transforms=None):
         """
         Do inference.
         Args:
@@ -539,19 +540,21 @@ class BaseSegmenter(BaseModel):
             from osgeo import gdal
         except:
             import gdal
-        
+
         if isinstance(block_size, int):
             block_size = (block_size, block_size)
         elif isinstance(block_size, (tuple, list)) and len(block_size) == 2:
             block_size = tuple(block_size)
         else:
-            raise ValueError("`block_size` must be a tuple/list of length 2 or a integer.")
+            raise ValueError(
+                "`block_size` must be a tuple/list of length 2 or a integer.")
         if isinstance(overlap, int):
             overlap = (overlap, overlap)
         elif isinstance(overlap, (tuple, list)) and len(overlap) == 2:
             overlap = tuple(overlap)
         else:
-            raise ValueError("`overlap` must be a tuple/list of length 2 or a integer.")
+            raise ValueError(
+                "`overlap` must be a tuple/list of length 2 or a integer.")
 
         src_data = gdal.Open(img_file)
         width = src_data.RasterXSize
@@ -559,7 +562,8 @@ class BaseSegmenter(BaseModel):
         bands = src_data.RasterCount
 
         driver = gdal.GetDriverByName("GTiff")
-        file_name = osp.splitext(osp.normpath(img_file).split(os.sep)[-1])[0] + ".tif"
+        file_name = osp.splitext(osp.normpath(img_file).split(os.sep)[-1])[
+            0] + ".tif"
         if not osp.exists(save_dir):
             os.makedirs(save_dir)
         save_file = osp.join(save_dir, file_name)
@@ -577,13 +581,16 @@ class BaseSegmenter(BaseModel):
                     xsize = int(width - xoff)
                 if yoff + ysize > height:
                     ysize = int(height - yoff)
-                im = src_data.ReadAsArray(int(xoff), int(yoff), xsize, ysize).transpose((1, 2, 0))
+                im = src_data.ReadAsArray(int(xoff), int(yoff), xsize,
+                                          ysize).transpose((1, 2, 0))
                 # fill
                 h, w = im.shape[:2]
-                im_fill = np.zeros((block_size[1], block_size[0], bands), dtype=im.dtype)
+                im_fill = np.zeros(
+                    (block_size[1], block_size[0], bands), dtype=im.dtype)
                 im_fill[:h, :w, :] = im
                 # predict
-                pred = self.predict(im_fill, transforms)["label_map"].astype("uint8")
+                pred = self.predict(im_fill,
+                                    transforms)["label_map"].astype("uint8")
                 # overlap
                 rd_block = band.ReadAsArray(int(xoff), int(yoff), xsize, ysize)
                 mask = (rd_block == pred[:h, :w]) | (rd_block == 255)
@@ -594,9 +601,8 @@ class BaseSegmenter(BaseModel):
         dst_data = None
         print("GeoTiff saved in {}.".format(save_file))
 
+    @arrange_transforms_deco('transforms', mode='test')
     def _preprocess(self, images, transforms, to_tensor=True):
-        arrange_transforms(
-            model_type=self.model_type, transforms=transforms, mode='test')
         batch_im = list()
         batch_ori_shape = list()
         for im in images:
@@ -662,6 +668,7 @@ class BaseSegmenter(BaseModel):
             batch_restore_list.append(restore_list)
         return batch_restore_list
 
+    @arrange_transforms_deco('transforms', mode='test')
     def _postprocess(self, batch_pred, batch_origin_shape, transforms):
         batch_restore_list = BaseSegmenter.get_transforms_shape_info(
             batch_origin_shape, transforms)

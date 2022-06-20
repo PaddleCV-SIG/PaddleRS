@@ -30,7 +30,7 @@ import paddlers.utils.logging as logging
 from paddlers.transforms.operators import _NormalizeBox, _PadBox, _BboxXYXY2XYWH, Resize, Padding
 from paddlers.transforms.batch_operators import BatchCompose, BatchRandomResize, BatchRandomResizeByShort, \
     _BatchPadding, _Gt2YoloTarget
-from paddlers.transforms import arrange_transforms
+from paddlers.transforms import arrange_transforms_deco
 from .base import BaseModel
 from .utils.det_metrics import VOCMetric, COCOMetric
 from paddlers.models.ppdet.optimizer import ModelEMA
@@ -406,6 +406,7 @@ class BaseDetector(BaseModel):
             use_vdl=use_vdl,
             resume_checkpoint=resume_checkpoint)
 
+    @arrange_transforms_deco('eval_dataset', mode='eval')
     def evaluate(self,
                  eval_dataset,
                  batch_size=1,
@@ -452,10 +453,6 @@ class BaseDetector(BaseModel):
                 }
         eval_dataset.batch_transforms = self._compose_batch_transform(
             eval_dataset.transforms, mode='eval')
-        arrange_transforms(
-            model_type=self.model_type,
-            transforms=eval_dataset.transforms,
-            mode='eval')
 
         self.net.eval()
         nranks = paddle.distributed.get_world_size()
@@ -544,9 +541,8 @@ class BaseDetector(BaseModel):
             prediction = prediction[0]
         return prediction
 
+    @arrange_transforms_deco('transforms', mode='test')
     def _preprocess(self, images, transforms, to_tensor=True):
-        arrange_transforms(
-            model_type=self.model_type, transforms=transforms, mode='test')
         batch_samples = list()
         for im in images:
             sample = {'image': im}

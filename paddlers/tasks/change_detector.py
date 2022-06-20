@@ -27,7 +27,7 @@ import paddlers
 import paddlers.custom_models.cd as cmcd
 import paddlers.utils.logging as logging
 import paddlers.models.ppseg as paddleseg
-from paddlers.transforms import arrange_transforms
+from paddlers.transforms import arrange_transforms_deco
 from paddlers.transforms import ImgDecoder, Resize
 from paddlers.utils import get_single_card_bs, DisablePrint
 from paddlers.utils.checkpoint import seg_pretrain_weights_dict
@@ -371,6 +371,7 @@ class BaseChangeDetector(BaseModel):
             use_vdl=use_vdl,
             resume_checkpoint=resume_checkpoint)
 
+    @arrange_transforms_deco('eval_dataset', mode='eval')
     def evaluate(self, eval_dataset, batch_size=1, return_details=False):
         """
         Evaluate the model.
@@ -395,11 +396,6 @@ class BaseChangeDetector(BaseModel):
                  "category_F1-score": `F1 score`}.
 
         """
-        arrange_transforms(
-            model_type=self.model_type,
-            transforms=eval_dataset.transforms,
-            mode='eval')
-
         self.net.eval()
         nranks = paddle.distributed.get_world_size()
         local_rank = paddle.distributed.get_rank()
@@ -545,9 +541,8 @@ class BaseChangeDetector(BaseModel):
             }
         return prediction
 
+    @arrange_transforms_deco('transforms', mode='test')
     def _preprocess(self, images, transforms, to_tensor=True):
-        arrange_transforms(
-            model_type=self.model_type, transforms=transforms, mode='test')
         batch_im1, batch_im2 = list(), list()
         batch_ori_shape = list()
         for im1, im2 in images:
@@ -619,6 +614,7 @@ class BaseChangeDetector(BaseModel):
             batch_restore_list.append(restore_list)
         return batch_restore_list
 
+    @arrange_transforms_deco('transforms', mode='test')
     def _postprocess(self, batch_pred, batch_origin_shape, transforms):
         batch_restore_list = BaseChangeDetector.get_transforms_shape_info(
             batch_origin_shape, transforms)

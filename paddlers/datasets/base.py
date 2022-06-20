@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from copy import deepcopy
+from functools import wraps
 
 from paddle.io import Dataset
 
@@ -28,3 +29,16 @@ class BaseDataset(Dataset):
         self.transforms = deepcopy(transforms)
         self.num_workers = get_num_workers(num_workers)
         self.shuffle = shuffle
+
+        def _add_arrange_check(method):
+            @wraps(method)
+            def _wrapper(*args, **kwargs):
+                if self.transforms.has_arrange:
+                    raise RuntimeError(
+                        "The output of transform operators has not been arranged."
+                    )
+                return method()
+
+            return _wrapper
+
+        self.__getitem__ = _add_arrange_check(self.__getitem__)
