@@ -668,7 +668,6 @@ class BaseSegmenter(BaseModel):
             batch_restore_list.append(restore_list)
         return batch_restore_list
 
-    @arrange_transforms_deco('transforms', mode='test')
     def _postprocess(self, batch_pred, batch_origin_shape, transforms):
         batch_restore_list = BaseSegmenter.get_transforms_shape_info(
             batch_origin_shape, transforms)
