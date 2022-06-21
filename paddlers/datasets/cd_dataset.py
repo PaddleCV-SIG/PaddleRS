@@ -22,7 +22,7 @@ from paddlers.utils import logging, get_encoding, path_normalization, is_pic
 
 class CDDataset(BaseDataset):
     """
-    读取变化检测任务数据集，并对样本进行相应的处理（来自SegDataset，图像标签需要两个）。
+    读取变化检测任务数据集，并对样本进行相应的处理。
 
     Args:
         data_dir (str): 数据集所在的目录路径。
@@ -30,10 +30,9 @@ class CDDataset(BaseDataset):
             False（默认设置）时，文件中每一行应依次包含第一时相影像、第二时相影像以及变化检测标签的路径；当`with_seg_labels`为True时，
             文件中每一行应依次包含第一时相影像、第二时相影像、变化检测标签、第一时相建筑物标签以及第二时相建筑物标签的路径。
         transforms (paddlers.transforms.Compose): 数据集中每个样本的预处理/增强算子。
-        label_list (str, optional): 描述数据集包含的类别信息文件路径。默认值为None。
-        num_workers (int|str, optional): 数据集中样本在预处理过程中的线程或进程数。默认为'auto'。当设为'auto'时，根据
-            系统的实际CPU核数设置`num_workers`: 如果CPU核数的一半大于8，则`num_workers`为8，否则为CPU核数的
-            一半。
+        label_list (str, optional): 描述数据集包含的类别信息文件路径。默认为None。
+        num_workers (int|str, optional): 数据集中样本在预处理过程中的线程或进程数。当设为'auto'时，根据系统的实际CPU核数设置
+            `num_workers`: 如果CPU核数的一半大于8，则`num_workers`为8，否则为CPU核数的一半。默认为'auto'。
         shuffle (bool, optional): 是否需要对数据集中样本打乱顺序。默认为False。
         with_seg_labels (bool, optional): 数据集中是否包含两个时相的语义分割标签。默认为False。
         binarize_labels (bool, optional): 是否对数据集中的标签进行二值化操作。默认为False。
