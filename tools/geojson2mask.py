@@ -12,17 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import codecs
 import cv2
 import numpy as np
 import argparse
 import geojson
 from tqdm import tqdm
-from utils import Raster, save_geotiff, use_time
-try:
-    from osgeo import gdal
-except ImportError:
-    import gdal
+from utils import Raster, save_geotiff, vector_translate, use_time
 
 
 def _gt_convert(x_geo, y_geo, geotf):
@@ -33,11 +30,13 @@ def _gt_convert(x_geo, y_geo, geotf):
 
 @use_time
 def convert_data(image_path, geojson_path):
-    # raster = Raster(image_path)
-    raster = gdal.Warp("", image_path, dstSRS="EPSG:4326", format="VRT")  # open as wgs84
-    tmp_img = np.zeros((raster.RasterYSize, raster.RasterXSize), dtype=np.int32)
-    geo_reader = codecs.open(geojson_path, "r", encoding="utf-8")
+    raster = Raster(image_path)
+    tmp_img = np.zeros((raster.height, raster.width), dtype=np.int32)
+    # vector to EPSG from raster
+    temp_geojson_path = vector_translate(geojson_path, raster.proj)
+    geo_reader = codecs.open(temp_geojson_path, "r", encoding="utf-8")
     feats = geojson.loads(geo_reader.read())["features"]  # 所有图像块
+    geo_reader.close()
     for feat in tqdm(feats):
         geo = feat["geometry"]
         if geo["type"] == "Polygon":  # 多边形
@@ -45,16 +44,17 @@ def convert_data(image_path, geojson_path):
         elif geo["type"] == "MultiPolygon":  # 多面
             geo_points = geo["coordinates"][0][0]
         else:
-            raise TypeError("Geometry type must be `Polygon` or `MultiPolygon`, not {}.".format(geo["type"]))
+            raise TypeError("Geometry type must be `Polygon` or `MultiPolygon`, not {}.".format(
+                geo["type"]))
         xy_points = np.array([
-            _gt_convert(point[0], point[1], raster.GetGeoTransform())
+            _gt_convert(point[0], point[1], raster.geot)
             for point in geo_points
         ]).astype(np.int32)
         # TODO: Label category
         cv2.fillPoly(tmp_img, [xy_points], 1)  # 多边形填充
     ext = "." + geojson_path.split(".")[-1]
-    save_geotiff(tmp_img, geojson_path.replace(ext, ".tif"), 
-                 raster.GetProjection(), raster.GetGeoTransform())
+    save_geotiff(tmp_img, geojson_path.replace(ext, ".tif"), raster.proj, raster.geot)
+    os.remove(temp_geojson_path)
 
 
 parser = argparse.ArgumentParser(description="input parameters")
