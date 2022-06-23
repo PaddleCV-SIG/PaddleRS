@@ -18,7 +18,7 @@ import numpy as np
 import argparse
 import geojson
 from tqdm import tqdm
-from utils import Raster, save_geotiff, Timer
+from utils import Raster, save_geotiff, use_time
 
 
 def _gt_convert(x_geo, y_geo, geotf):
@@ -27,7 +27,7 @@ def _gt_convert(x_geo, y_geo, geotf):
     return np.round(np.linalg.solve(a, b)).tolist()  # 解一元二次方程
 
 
-@Timer
+@use_time
 def convert_data(image_path, geojson_path):
     raster = Raster(image_path)
     tmp_img = np.zeros((raster.height, raster.width), dtype=np.int32)

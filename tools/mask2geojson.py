@@ -20,7 +20,7 @@ import numpy as np
 import geojson
 from geojson import Polygon, Feature, FeatureCollection
 
-from utils import Raster, Timer
+from utils import Raster, use_time
 
 
 def _gt_convert(x, y, geotf):
@@ -29,7 +29,7 @@ def _gt_convert(x, y, geotf):
     return x_geo, y_geo
 
 
-@Timer
+@use_time
 def convert_data(mask_path, save_path, epsilon=0):
     raster = Raster(mask_path)
     img = raster.getArray()

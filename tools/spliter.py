@@ -19,10 +19,10 @@ from math import ceil
 
 from PIL import Image
 
-from utils import Raster, Timer
+from utils import Raster, use_time
 
 
-@Timer
+@use_time
 def split_data(image_path, mask_path, block_size, save_folder):
     if not osp.exists(save_folder):
         os.makedirs(save_folder)

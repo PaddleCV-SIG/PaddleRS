@@ -25,20 +25,13 @@ except ImportError:
     import ogr
     import osr
 
-from utils import Raster, Timer
+from utils import Raster, save_geotiff, use_time
 
 
 def _mask2tif(mask_path, tmp_path, proj, geot):
-    mask = np.asarray(Image.open(mask_path))
-    if len(mask.shape) == 3:
-        mask = mask[:, :, 0]
-    row, columns = mask.shape[:2]
-    driver = gdal.GetDriverByName("GTiff")
-    dst_ds = driver.Create(tmp_path, columns, row, 1, gdal.GDT_UInt16)
-    dst_ds.SetGeoTransform(geot)
-    dst_ds.SetProjection(proj)
-    dst_ds.GetRasterBand(1).WriteArray(mask)
-    dst_ds.FlushCache()
+    dst_ds = save_geotiff(
+        np.asarray(Image.open(mask_path)),
+        tmp_path, proj, geot,  gdal.GDT_UInt16, False)
     return dst_ds
 
 
@@ -70,8 +63,11 @@ def _polygonize_raster(mask_path, shp_save_path, proj, geot, ignore_index):
     os.remove(tmp_path)
 
 
-@Timer
+@use_time
 def raster2shp(srcimg_path, mask_path, save_path, ignore_index=255):
+    ext = save_path.split(".")[-1]
+    if ext != "shp":
+        raise ValueError("The ext of `save_path` must be `shp`, not {}.".format(ext))
     src = Raster(srcimg_path)
     _polygonize_raster(mask_path, save_path, src.proj, src.geot, ignore_index)
     src = None
@@ -82,8 +78,8 @@ parser.add_argument("--srcimg_path", type=str, required=True, \
                     help="The path of original data with geoinfos.")
 parser.add_argument("--mask_path", type=str, required=True, \
                     help="The path of mask data.")
-parser.add_argument("--save_path", type=str, default="output", \
-                    help="The path to save the results shapefile, `output` is the default.")
+parser.add_argument("--save_path", type=str, required=True, \
+                    help="The path to save the results, file suffix is `*.shp`.")
 parser.add_argument("--ignore_index", type=int, default=255, \
                     help="It will not be converted to the value of SHP, `255` is the default.")
 

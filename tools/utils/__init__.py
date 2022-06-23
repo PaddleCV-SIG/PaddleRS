@@ -17,4 +17,4 @@ import os.path as osp
 sys.path.insert(0, osp.abspath(".."))  # add workspace
 
 from .raster import Raster, raster2uint8, save_geotiff
-from .timer import Timer
+from .timer import use_time
