@@ -19,6 +19,10 @@ import argparse
 import geojson
 from tqdm import tqdm
 from utils import Raster, save_geotiff, use_time
+try:
+    from osgeo import gdal
+except ImportError:
+    import gdal
 
 
 def _gt_convert(x_geo, y_geo, geotf):
@@ -29,8 +33,9 @@ def _gt_convert(x_geo, y_geo, geotf):
 
 @use_time
 def convert_data(image_path, geojson_path):
-    raster = Raster(image_path)
-    tmp_img = np.zeros((raster.height, raster.width), dtype=np.int32)
+    # raster = Raster(image_path)
+    raster = gdal.Warp("", image_path, dstSRS="EPSG:4326", format="VRT")  # open as wgs84
+    tmp_img = np.zeros((raster.RasterYSize, raster.RasterXSize), dtype=np.int32)
     geo_reader = codecs.open(geojson_path, "r", encoding="utf-8")
     feats = geojson.loads(geo_reader.read())["features"]  # 所有图像块
     for feat in tqdm(feats):
@@ -42,20 +47,21 @@ def convert_data(image_path, geojson_path):
         else:
             raise TypeError("Geometry type must be `Polygon` or `MultiPolygon`, not {}.".format(geo["type"]))
         xy_points = np.array([
-            _gt_convert(point[0], point[1], raster.geot)
+            _gt_convert(point[0], point[1], raster.GetGeoTransform())
             for point in geo_points
         ]).astype(np.int32)
         # TODO: Label category
         cv2.fillPoly(tmp_img, [xy_points], 1)  # 多边形填充
     ext = "." + geojson_path.split(".")[-1]
-    save_geotiff(tmp_img, geojson_path.replace(ext, ".tif"), raster.proj, raster.geot)
+    save_geotiff(tmp_img, geojson_path.replace(ext, ".tif"), 
+                 raster.GetProjection(), raster.GetGeoTransform())
 
 
 parser = argparse.ArgumentParser(description="input parameters")
 parser.add_argument("--image_path", type=str, required=True, \
                     help="The path of original image.")
 parser.add_argument("--geojson_path", type=str, required=True, \
-                    help="The path of geojson.")
+                    help="The path of geojson. (coordinate of geojson is WGS84)")
 
 
 if __name__ == "__main__":
