@@ -49,37 +49,45 @@ def _get_type(type_name: str) -> int:
 
 class Raster:
     def __init__(self,
-                 path: str,
+                 path: Optional[str],
+                 gdal_obj: Optional[gdal.Dataset]=None,
                  band_list: Union[List[int], Tuple[int], None]=None,
                  to_uint8: bool=False) -> None:
         """ Class of read raster.
         Args:
-            path (str): The path of raster.
+            path (Optional[str]): The path of raster.
+            gdal_obj (Optional[Any], optional): The object of GDAL. Defaults to None.
             band_list (Union[List[int], Tuple[int], None], optional): 
                 band list (start with 1) or None (all of bands). Defaults to None.
             to_uint8 (bool, optional): 
                 Convert uint8 or return raw data. Defaults to False.
         """
         super(Raster, self).__init__()
-        if osp.exists(path):
-            self.path = path
-            self.ext_type = path.split(".")[-1]
-            if self.ext_type.lower() in ["npy", "npz"]:
-                self._src_data = None
+        if path is not None:
+            if osp.exists(path):
+                self.path = path
+                self.ext_type = path.split(".")[-1]
+                if self.ext_type.lower() in ["npy", "npz"]:
+                    self._src_data = None
+                else:
+                    try:
+                        # raster format support in GDAL: 
+                        # https://www.osgeo.cn/gdal/drivers/raster/index.html
+                        self._src_data = gdal.Open(path)
+                    except:
+                        raise TypeError(
+                            "Unsupported data format: `{}`".format(self.ext_type))
             else:
-                try:
-                    # raster format support in GDAL: 
-                    # https://www.osgeo.cn/gdal/drivers/raster/index.html
-                    self._src_data = gdal.Open(path)
-                except:
-                    raise TypeError(
-                        "Unsupported data format: `{}`".format(self.ext_type))
-            self.to_uint8 = to_uint8
-            self._getInfo()
-            self.setBands(band_list)
-            self._getType()
+                raise ValueError("The path {0} not exists.".format(path))
         else:
-            raise ValueError("The path {0} not exists.".format(path))
+            if gdal_obj is not None:
+                self._src_data = gdal_obj
+            else:
+                raise ValueError("At least one of `path` and `gdal_obj` is not None.")
+        self.to_uint8 = to_uint8
+        self._getInfo()
+        self.setBands(band_list)
+        self._getType()
 
     def setBands(self, band_list: Union[List[int], Tuple[int], None]) -> None:
         """ Set band of data.

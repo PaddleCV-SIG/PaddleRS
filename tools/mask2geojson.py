@@ -19,8 +19,13 @@ import cv2
 import numpy as np
 import geojson
 from geojson import Polygon, Feature, FeatureCollection
+try:
+    from osgeo import gdal
+except ImportError:
+    import gdal
 
 from utils import Raster, use_time
+
 
 
 def _gt_convert(x, y, geotf):
@@ -31,7 +36,8 @@ def _gt_convert(x, y, geotf):
 
 @use_time
 def convert_data(mask_path, save_path, epsilon=0):
-    raster = Raster(mask_path)
+    raster = gdal.Warp("", mask_path, dstSRS="EPSG:4326", format="VRT")  # open as wgs84
+    raster = Raster(path=None, gdal_obj=raster)
     img = raster.getArray()
     ext = save_path.split(".")[-1]
     if ext != "json" and ext != "geojson":
@@ -42,26 +48,43 @@ def convert_data(mask_path, save_path, epsilon=0):
     feats = []
     if not isinstance(epsilon, (int, float)):
         epsilon = 0
+    polygons = []
+    relas = []
     for iclas in range(1, len(clas)):
         tmp = np.zeros_like(img).astype("uint8")
         tmp[img == iclas] = 1
-        # TODO: Detect internal and external contour
-        results = cv2.findContours(tmp, cv2.RETR_EXTERNAL,
+        # Detect internal and external contour
+        results = cv2.findContours(tmp, cv2.RETR_TREE,
                                    cv2.CHAIN_APPROX_TC89_KCOS)
         contours = results[1] if cv2_v else results[0]
-        # hierarchys = results[2] if cv2_v else results[1]
+        hierarchys = results[2] if cv2_v else results[1]
+        # find all of polygons
         if len(contours) == 0:
             continue
-        for contour in contours:
+        for contour, hierarchy in zip(contours, hierarchys[0]):
             contour = cv2.approxPolyDP(contour, epsilon, True)
+            rela = hierarchy[-1] if hierarchy[-1] != -1 else None  # parent
             polys = []
             for point in contour:
                 x, y = point[0]
                 xg, yg = _gt_convert(x, y, raster.geot)
                 polys.append((xg, yg))
             polys.append(polys[0])
+            polygons.append(polys)
+            relas.append(rela)
+        # merge polygon and hole
+        poly_dict = dict()
+        for idx in range(len(relas)):
+            if relas[idx] is not None:  # this is a hole
+                poly_dict[relas[idx]].append(polygons[idx])
+            else:
+                poly_dict[idx] = [polygons[idx]]
+        # create feature
+        for _, v in poly_dict.items():
             feat = Feature(
-                geometry=Polygon([polys]), properties={"class": int(iclas)})
+                geometry=Polygon(v), 
+                properties={"class": int(iclas)}
+            )
             feats.append(feat)
     gjs = FeatureCollection(feats)
     geo_writer.write(geojson.dumps(gjs))
