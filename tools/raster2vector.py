@@ -35,55 +35,66 @@ def _mask2tif(mask_path, tmp_path, proj, geot):
     return dst_ds
 
 
-def _polygonize_raster(mask_path, shp_save_path, proj, geot, ignore_index):
-    tmp_path = shp_save_path.replace(".shp", ".tif")
-    ds = _mask2tif(mask_path, tmp_path, proj, geot)
+def _polygonize_raster(mask_path, shp_save_path, proj, geot, ignore_index, ext):
+    if proj is None or geot is None:
+        tmp_path = None
+        ds = gdal.Open(mask_path)
+    else:
+        tmp_path = shp_save_path.replace("." + ext, ".tif")
+        ds = _mask2tif(mask_path, tmp_path, proj, geot)
     srcband = ds.GetRasterBand(1)
     maskband = srcband.GetMaskBand()
     gdal.SetConfigOption("GDAL_FILENAME_IS_UTF8", "YES")
     gdal.SetConfigOption("SHAPE_ENCODING", "UTF-8")
     ogr.RegisterAll()
-    drv = ogr.GetDriverByName("ESRI Shapefile")
+    drv = ogr.GetDriverByName(
+        "ESRI Shapefile" if ext == "shp" else "GeoJSON"
+    )
     if osp.exists(shp_save_path):
         os.remove(shp_save_path)
     dst_ds = drv.CreateDataSource(shp_save_path)
     prosrs = osr.SpatialReference(wkt=ds.GetProjection())
     dst_layer = dst_ds.CreateLayer(
-        "Building boundary", geom_type=ogr.wkbPolygon, srs=prosrs)
+        "Layer", geom_type=ogr.wkbPolygon, srs=prosrs)
     dst_fieldname = "DN"
     fd = ogr.FieldDefn(dst_fieldname, ogr.OFTInteger)
     dst_layer.CreateField(fd)
     gdal.Polygonize(srcband, maskband, dst_layer, 0, [])
     lyr = dst_ds.GetLayer()
+    # FIXME: Invalid for GEOJSON
     lyr.SetAttributeFilter("DN = '{}'".format(str(ignore_index)))
     for holes in lyr:
         lyr.DeleteFeature(holes.GetFID())
     dst_ds.Destroy()
     ds = None
-    os.remove(tmp_path)
+    if tmp_path is not None:
+        os.remove(tmp_path)
 
 
 @use_time
-def raster2shp(srcimg_path, mask_path, save_path, ignore_index=255):
-    ext = save_path.split(".")[-1]
-    if ext != "shp":
-        raise ValueError("The ext of `save_path` must be `shp`, not {}.".format(ext))
-    src = Raster(srcimg_path)
-    _polygonize_raster(mask_path, save_path, src.proj, src.geot, ignore_index)
-    src = None
+def raster2geojson(srcimg_path, mask_path, save_path, ignore_index=255):
+    vec_ext = save_path.split(".")[-1].lower()
+    if vec_ext not in ["json", "geojson", "shp"]:
+        raise ValueError("The ext of `save_path` must be `json/geojson` or `shp`, not {}.".format(vec_ext))
+    ras_ext = srcimg_path.split(".")[-1].lower()
+    if osp.exists(srcimg_path) and ras_ext in ["tif", "tiff", "geotiff", "img"]:
+        src = Raster(srcimg_path)
+        _polygonize_raster(mask_path, save_path, src.proj, src.geot, ignore_index, vec_ext)
+        src = None
+    else:
+        _polygonize_raster(mask_path, save_path, None, None, ignore_index, vec_ext)
 
 
 parser = argparse.ArgumentParser(description="input parameters")
-parser.add_argument("--srcimg_path", type=str, required=True, \
-                    help="The path of original data with geoinfos.")
 parser.add_argument("--mask_path", type=str, required=True, \
                     help="The path of mask data.")
 parser.add_argument("--save_path", type=str, required=True, \
-                    help="The path to save the results, file suffix is `*.shp`.")
+                    help="The path to save the results, file suffix is `*.json/geojson` or `*.shp`.")
+parser.add_argument("--srcimg_path", type=str, default="", \
+                    help="The path of original data with geoinfos, `` is the default.")
 parser.add_argument("--ignore_index", type=int, default=255, \
                     help="It will not be converted to the value of SHP, `255` is the default.")
 
 if __name__ == "__main__":
     args = parser.parse_args()
-    raster2shp(args.srcimg_path, args.mask_path, args.save_path,
-               args.ignore_index)
+    raster2geojson(args.srcimg_path, args.mask_path, args.save_path, args.ignore_index)

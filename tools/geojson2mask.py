@@ -29,6 +29,7 @@ def _gt_convert(x_geo, y_geo, geotf):
 
 
 @use_time
+# FIXME: update for vector2raster
 def convert_data(image_path, geojson_path):
     raster = Raster(image_path)
     tmp_img = np.zeros((raster.height, raster.width), dtype=np.int32)

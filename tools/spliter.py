@@ -23,6 +23,7 @@ from utils import Raster, use_time
 
 
 @use_time
+# FIXME: update for HSI
 def split_data(image_path, mask_path, block_size, save_folder):
     if not osp.exists(save_folder):
         os.makedirs(save_folder)
