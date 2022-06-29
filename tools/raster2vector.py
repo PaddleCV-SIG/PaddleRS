@@ -35,12 +35,12 @@ def _mask2tif(mask_path, tmp_path, proj, geot):
     return dst_ds
 
 
-def _polygonize_raster(mask_path, shp_save_path, proj, geot, ignore_index, ext):
+def _polygonize_raster(mask_path, vec_save_path, proj, geot, ignore_index, ext):
     if proj is None or geot is None:
         tmp_path = None
         ds = gdal.Open(mask_path)
     else:
-        tmp_path = shp_save_path.replace("." + ext, ".tif")
+        tmp_path = vec_save_path.replace("." + ext, ".tif")
         ds = _mask2tif(mask_path, tmp_path, proj, geot)
     srcband = ds.GetRasterBand(1)
     maskband = srcband.GetMaskBand()
@@ -50,23 +50,25 @@ def _polygonize_raster(mask_path, shp_save_path, proj, geot, ignore_index, ext):
     drv = ogr.GetDriverByName(
         "ESRI Shapefile" if ext == "shp" else "GeoJSON"
     )
-    if osp.exists(shp_save_path):
-        os.remove(shp_save_path)
-    dst_ds = drv.CreateDataSource(shp_save_path)
+    if osp.exists(vec_save_path):
+        os.remove(vec_save_path)
+    dst_ds = drv.CreateDataSource(vec_save_path)
     prosrs = osr.SpatialReference(wkt=ds.GetProjection())
     dst_layer = dst_ds.CreateLayer(
-        "Layer", geom_type=ogr.wkbPolygon, srs=prosrs)
-    dst_fieldname = "DN"
+        "POLYGON", geom_type=ogr.wkbPolygon, srs=prosrs)
+    dst_fieldname = "CLAS"
     fd = ogr.FieldDefn(dst_fieldname, ogr.OFTInteger)
     dst_layer.CreateField(fd)
     gdal.Polygonize(srcband, maskband, dst_layer, 0, [])
-    lyr = dst_ds.GetLayer()
-    # FIXME: Invalid for GEOJSON
-    lyr.SetAttributeFilter("DN = '{}'".format(str(ignore_index)))
-    for holes in lyr:
-        lyr.DeleteFeature(holes.GetFID())
+    # TODO: temporary: delete ignored values
     dst_ds.Destroy()
     ds = None
+    vec_ds = drv.Open(vec_save_path, 1)
+    lyr = vec_ds.GetLayer()
+    lyr.SetAttributeFilter("{} = '{}'".format(dst_fieldname, str(ignore_index)))
+    for holes in lyr:
+        lyr.DeleteFeature(holes.GetFID())
+    vec_ds.Destroy()
     if tmp_path is not None:
         os.remove(tmp_path)
 
