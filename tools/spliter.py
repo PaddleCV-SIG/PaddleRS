@@ -18,7 +18,7 @@ import argparse
 from math import ceil
 from tqdm import tqdm
 
-from utils import Raster, save_geotiff, use_time
+from utils import Raster, save_geotiff, timer
 
 
 def _calc_window_tf(geot, loc):
@@ -27,7 +27,7 @@ def _calc_window_tf(geot, loc):
     return (x + nx * hr, hr, r1, y + ny * vr, r2, vr)
 
 
-@use_time
+@timer
 def split_data(image_path, mask_path, block_size, save_folder):
     if not osp.exists(save_folder):
         os.makedirs(save_folder)

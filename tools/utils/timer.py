@@ -16,7 +16,7 @@ import time
 from functools import wraps
 
 
-def use_time(func):
+def timer(func):
     @wraps(func)
     def wrapper(*args,**kwargs):
         start_time = time.time()

@@ -17,7 +17,7 @@ import argparse
 import numpy as np
 import cv2
 
-from utils import Raster, raster2uint8, save_geotiff, use_time
+from utils import Raster, raster2uint8, save_geotiff, timer
 
 class MatchError(Exception):
     def __str__(self):
@@ -60,7 +60,7 @@ def _get_match_img(raster, bands):
     return ima
 
 
-@use_time
+@timer
 def matching(im1_path, im2_path, im1_bands=[1, 2, 3], im2_bands=[1, 2, 3]):
     im1_ras = Raster(im1_path)
     im2_ras = Raster(im2_path)

@@ -25,7 +25,7 @@ except ImportError:
     import ogr
     import osr
 
-from utils import Raster, save_geotiff, use_time
+from utils import Raster, save_geotiff, timer
 
 
 def _mask2tif(mask_path, tmp_path, proj, geot):
@@ -73,8 +73,8 @@ def _polygonize_raster(mask_path, vec_save_path, proj, geot, ignore_index, ext):
         os.remove(tmp_path)
 
 
-@use_time
-def raster2geojson(srcimg_path, mask_path, save_path, ignore_index=255):
+@timer
+def raster2vector(srcimg_path, mask_path, save_path, ignore_index=255):
     vec_ext = save_path.split(".")[-1].lower()
     if vec_ext not in ["json", "geojson", "shp"]:
         raise ValueError("The ext of `save_path` must be `json/geojson` or `shp`, not {}.".format(vec_ext))
@@ -99,4 +99,4 @@ parser.add_argument("--ignore_index", type=int, default=255, \
 
 if __name__ == "__main__":
     args = parser.parse_args()
-    raster2geojson(args.srcimg_path, args.mask_path, args.save_path, args.ignore_index)
+    raster2vector(args.srcimg_path, args.mask_path, args.save_path, args.ignore_index)
