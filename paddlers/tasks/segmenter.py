@@ -528,7 +528,7 @@ class BaseSegmenter(BaseModel):
             img_file(str):
                 Image path.
             save_dir(str):
-                Folder of geotiff saved.
+                Directory that contains saved geotiff file.
             block_size(List[int] or Tuple[int], int):
                 The size of block.
             overlap(List[int] or Tuple[int], int):
