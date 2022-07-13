@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import cv2
 import copy
 
 import numpy as np
+import cv2
 import shapely.ops
 from shapely.geometry import Polygon, MultiPolygon, GeometryCollection
 from sklearn.linear_model import LinearRegression
@@ -126,30 +126,34 @@ def img_flip(im, method=0):
     """
     if not len(im.shape) >= 2:
         raise ValueError("Shape of image should 2d, 3d or more")
-    if method==0 or method=='h':
+    if method == 0 or method == 'h':
         return horizontal_flip(im)
-    elif method==1 or method=='v':
+    elif method == 1 or method == 'v':
         return vertical_flip(im)
-    elif method==2 or method=='hv':
+    elif method == 2 or method == 'hv':
         return hv_flip(im)
-    elif method==3 or method=='rt2lb' or method=='dia':
+    elif method == 3 or method == 'rt2lb' or method == 'dia':
         return rt2lb_flip(im)
-    elif method==4 or method=='lt2rb' or method=='adia':
+    elif method == 4 or method == 'lt2rb' or method == 'adia':
         return lt2rb_flip(im)
     else:
         return im
+
 
 def horizontal_flip(im):
     im = im[:, ::-1, ...]
     return im
 
+
 def vertical_flip(im):
     im = im[::-1, :, ...]
     return im
 
+
 def hv_flip(im):
     im = im[::-1, ::-1, ...]
     return im
+
 
 def rt2lb_flip(im):
     axs_list = list(range(len(im.shape)))
@@ -157,13 +161,16 @@ def rt2lb_flip(im):
     im = im.transpose(axs_list)
     return im
 
+
 def lt2rb_flip(im):
     axs_list = list(range(len(im.shape)))
     axs_list[:2] = [1, 0]
     im = im[::-1, ::-1, ...].transpose(axs_list)
     return im
 
+
 # endregion
+
 
 # region rotation
 def img_simple_rotate(im, method=0):
@@ -223,14 +230,15 @@ def img_simple_rotate(im, method=0):
     """
     if not len(im.shape) >= 2:
         raise ValueError("Shape of image should 2d, 3d or more")
-    if method==0 or method==90:
+    if method == 0 or method == 90:
         return rot_90(im)
-    elif method==1 or method==180:
+    elif method == 1 or method == 180:
         return rot_180(im)
-    elif method==2 or method==270:
+    elif method == 2 or method == 270:
         return rot_270(im)
     else:
         return im
+
 
 def rot_90(im):
     axs_list = list(range(len(im.shape)))
@@ -238,15 +246,19 @@ def rot_90(im):
     im = im[::-1, :, ...].transpose(axs_list)
     return im
 
+
 def rot_180(im):
     im = im[::-1, ::-1, ...]
     return im
+
 
 def rot_270(im):
     axs_list = list(range(len(im.shape)))
     axs_list[:2] = [1, 0]
     im = im[:, ::-1, ...].transpose(axs_list)
     return im
+
+
 # endregion
 
 

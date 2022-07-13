@@ -18,6 +18,7 @@ from functools import wraps
 from paddle.io import Dataset
 
 from paddlers.utils import get_num_workers
+from paddlers import global_options
 
 
 class BaseDataset(Dataset):
@@ -35,9 +36,10 @@ class BaseDataset(Dataset):
         def _add_arrange_check(method):
             @wraps(method)
             def _wrapper(self, *args, **kwargs):
-                if not self.transforms.has_arrange:
+                if not global_options.ALLOW_NO_ARRANGE and not self.transforms.has_arrange:
                     raise RuntimeError(
-                        "The output of transform operators has not been arranged."
+                        "The output of transform operators has not been arranged. Please check if indexing of the dataset happened during model training, evaluation,"
+                        "or inference. Please set `paddlrs.global_options.ALLOW_NO_ARRANGE` to True if your intention is to check the content of the dataset."
                     )
                 return method(self, *args, **kwargs)
 

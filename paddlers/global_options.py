@@ -12,13 +12,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-__version__ = 'develop'
-
-from paddlers.utils.env import get_environ_info, init_parallel_env
-init_parallel_env()
-
-env_info = get_environ_info()
-
-log_level = 2
-
-from . import tasks, datasets, transforms, utils, tools, models, deploy, global_options
+# If True, allow a dataset to be indexed without setting the arrange_output attribute
+ALLOW_NO_ARRANGE = False

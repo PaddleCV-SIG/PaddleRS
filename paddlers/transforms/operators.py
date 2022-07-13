@@ -118,6 +118,7 @@ class Transform(object):
 class ImgDecoder(Transform):
     """
     Decode image(s) in input.
+
     Args:
         to_rgb (bool, optional): If True, convert input images from BGR format to RGB format. Defaults to True.
     """
@@ -197,6 +198,7 @@ class ImgDecoder(Transform):
         """
         Args:
             sample (dict): Input sample.
+
         Returns:
             dict: Decoded sample.
         """
@@ -227,13 +229,14 @@ class ImgDecoder(Transform):
         return sample
 
 
-class Compose(Transform):
+class Compose(object):
     """
     Apply a series of data augmentation to the input.
     All input images are in Height-Width-Channel ([H, W, C]) format.
 
     Args:
         transforms (List[paddlers.transforms.Transform]): List of data preprocess or augmentations.
+
     Raises:
         TypeError: Invalid type of transforms.
         ValueError: Invalid length of transforms.
@@ -1058,6 +1061,7 @@ class RandomCrop(Transform):
 class RandomScaleAspect(Transform):
     """
     Crop input image(s) and resize back to original sizes.
+
     Args: 
         min_scale (float): Minimum ratio between the cropped region and the original image.
             If 0, image(s) will not be cropped. Defaults to .5.
@@ -1560,7 +1564,8 @@ class DimReducing(Transform):
         super(DimReducing, self).__init__()
         ext = joblib_path.split(".")[-1]
         if ext != "joblib":
-            raise ValueError("`joblib_path` must be *.joblib, not *.{}.".format(ext))
+            raise ValueError("`joblib_path` must be *.joblib, not *.{}.".format(
+                ext))
         self.pca = load(joblib_path)
 
     def apply_im(self, image):
@@ -1707,15 +1712,20 @@ class RandomSwap(Transform):
         return sample
 
 
-class ArrangeSegmenter(Transform):
+class Arrange(Transform):
     def __init__(self, mode):
-        super(ArrangeSegmenter, self).__init__()
+        super(Arrange, self).__init__()
         if mode not in ['train', 'eval', 'test', 'quant']:
             raise ValueError(
                 "mode should be defined as one of ['train', 'eval', 'test', 'quant']!"
             )
         self.mode = mode
 
+    def apply(self, sample):
+        raise NotImplementedError
+
+
+class ArrangeSegmenter(Arrange):
     def apply(self, sample):
         if 'mask' in sample:
             mask = sample['mask']
@@ -1732,15 +1742,7 @@ class ArrangeSegmenter(Transform):
             return image,
 
 
-class ArrangeChangeDetector(Transform):
-    def __init__(self, mode):
-        super(ArrangeChangeDetector, self).__init__()
-        if mode not in ['train', 'eval', 'test', 'quant']:
-            raise ValueError(
-                "mode should be defined as one of ['train', 'eval', 'test', 'quant']!"
-            )
-        self.mode = mode
-
+class ArrangeChangeDetector(Arrange):
     def apply(self, sample):
         if 'mask' in sample:
             mask = sample['mask']
@@ -1764,15 +1766,7 @@ class ArrangeChangeDetector(Transform):
             return image_t1, image_t2,
 
 
-class ArrangeClassifier(Transform):
-    def __init__(self, mode):
-        super(ArrangeClassifier, self).__init__()
-        if mode not in ['train', 'eval', 'test', 'quant']:
-            raise ValueError(
-                "mode should be defined as one of ['train', 'eval', 'test', 'quant']!"
-            )
-        self.mode = mode
-
+class ArrangeClassifier(Arrange):
     def apply(self, sample):
         image = permute(sample['image'], False)
         if self.mode in ['train', 'eval']:
@@ -1781,15 +1775,7 @@ class ArrangeClassifier(Transform):
             return image
 
 
-class ArrangeDetector(Transform):
-    def __init__(self, mode):
-        super(ArrangeDetector, self).__init__()
-        if mode not in ['train', 'eval', 'test', 'quant']:
-            raise ValueError(
-                "mode should be defined as one of ['train', 'eval', 'test', 'quant']!"
-            )
-        self.mode = mode
-
+class ArrangeDetector(Arrange):
     def apply(self, sample):
         if self.mode == 'eval' and 'gt_poly' in sample:
             del sample['gt_poly']

@@ -40,12 +40,11 @@ def _get_arrange_transform(model_type, mode):
     elif model_type == 'detector':
         arrange_transform = op.ArrangeDetector(mode)
     else:
-        raise Exception("Unrecognized model type: {}".format(model_type))
+        raise ValueError("Unrecognized model type: {}".format(model_type))
     return arrange_transform, apply_im_only
 
 
 def arrange_transforms(model_type, transforms, mode='train'):
-    # 给transforms添加arrange操作
     arrange_transform, apply_im_only = _get_arrange_transform(model_type, mode)
     transforms.arrange_outputs = arrange_transform
     if apply_im_only is not None:
@@ -93,7 +92,8 @@ def build_transforms(transforms_info):
         op_name = list(op_info.keys())[0]
         op_attr = op_info[op_name]
         if not hasattr(T, op_name):
-            raise Exception("There's no transform named '{}'".format(op_name))
+            raise ValueError("There is no transform operator named '{}'".format(
+                op_name))
         transforms.append(getattr(T, op_name)(**op_attr))
     eval_transforms = T.Compose(transforms)
     return eval_transforms
