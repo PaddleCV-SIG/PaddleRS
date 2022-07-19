@@ -14,5 +14,5 @@
 </div>
 
 ## 最新动态 <img src="docs/images/seg_news_icon.png" width="30"/>
-*  [2022-07-19]为了提供更好的的开发体验，PaddleRS已迁移至**飞桨官方仓库**，[https://github.com/PaddlePaddle/PaddleRS](https://github.com/PaddlePaddle/PaddleRS)，现有代码仓库将不再更新。我们将会提供更全面的遥感功能，欢迎大家去新的地址体验。
+*  [2022-07-19]为了提供更好的开发体验，PaddleRS已迁移至**飞桨官方仓库**，[https://github.com/PaddlePaddle/PaddleRS](https://github.com/PaddlePaddle/PaddleRS)，现有代码仓库将不再更新。我们将会提供更全面的遥感功能，欢迎大家去新的地址体验。
 *   [2022-05-19] PaddleRS发布1.0-beta版本，全面支持遥感领域深度学习任务。详细发版信息请参考[Release Note](https://github.com/PaddleCV-SIG/PaddleRS/releases)。
